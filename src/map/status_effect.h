@@ -718,6 +718,7 @@ enum EFFECT
     EFFECT_MEDITATE                 = 801, // Dummy effect for SAM Meditate JA
     // EFFECT_PLACEHOLDER              = 802 // Description
     // 802-1022
+    EFFECT_INDI_POISON              = 822,
     // EFFECT_PLACEHOLDER             = 1023 // The client dat file seems to have only this many "slots", results of exceeding that are untested.
 };
 

@@ -157,6 +157,7 @@ class CItemContainer;
 class CUContainer;
 class CItemEquipment;
 class CAutomatonEntity;
+class CLuopanEntity;
 class CAbilityState;
 class CRangeState;
 class CItemState;
@@ -211,6 +212,8 @@ public:
 
     UnlockedAttachments_t	m_unlockedAttachments;			// Unlocked Automaton Attachments (1 bit per attachment)
     CAutomatonEntity*       PAutomaton;                     // Automaton statistics
+
+    CLuopanEntity* PLuopan;
 
     std::vector<CTrustEntity*> PTrusts; // Active trusts
 

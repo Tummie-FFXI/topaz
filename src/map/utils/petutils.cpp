@@ -36,6 +36,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/
 #include "../entities/mobentity.h"
 #include "../entities/trustentity.h"
 #include "../entities/automatonentity.h"
+#include "../entities/luopanentity.h"
 #include "../ability.h"
 #include "../status_effect_container.h"
 #include "../latent_effect_container.h"
@@ -972,6 +973,13 @@ namespace petutils
         {
             puppetutils::LoadAutomaton(static_cast<CCharEntity*>(PMaster));
             PMaster->PPet = static_cast<CCharEntity*>(PMaster)->PAutomaton;
+        }
+        else if (PMaster->objtype == TYPE_PC && PetID == PETID_LUOPAN)
+        {
+            auto master = static_cast<CCharEntity*>(PMaster);
+            delete master->PLuopan;
+            master->PLuopan = new CLuopanEntity();
+            PMaster->PPet = master->PLuopan;
         }
         else
         {
