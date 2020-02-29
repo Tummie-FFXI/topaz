@@ -814,6 +814,8 @@ tpz.effect =
     MEDITATE                 = 801, -- Dummy effect for SAM Meditate JA
     -- PLACEHOLDER              = 802, -- Description
     -- 802-1022
+    INDI_REGEN               = 821,
+    INDI_POISON              = 822,
     -- PLACEHOLDER             = 1023 -- The client dat file seems to have only this many "slots", results of exceeding that are untested.
 }
 

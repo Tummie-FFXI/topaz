@@ -1,5 +1,5 @@
 -----------------------------------------
--- Spell: Indi-Poison
+-- Spell: Indi-Regen
 -----------------------------------------
 require("scripts/globals/status")
 require("scripts/globals/msg")
@@ -11,5 +11,5 @@ end
 
 
 function onSpellCast(caster, target, spell)
-    return tpz.effect.INDI_POISON
+    return tpz.effect.INDI_REGEN
 end
