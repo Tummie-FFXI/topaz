@@ -55,6 +55,8 @@ enum PETID
     PETID_SHARPSHOTFRAME     = 71,
     PETID_STORMWAKERFRAME    = 72,
     PETID_LUOPAN             = 73,
+
+    PETID_CHOCOBO            = 74,
     // Trusts are 896 and above
     // PETID_SHANTOTTO          = 896
 };
