@@ -10,7 +10,7 @@ end
 
 
 function onSpellCast(caster, target, spell)
-    tpz.pet.spawnPet(player, tpz.pet.id.LUOPAN)
+    tpz.pet.spawnPet(caster, tpz.pet.id.LUOPAN)
     local pet = caster:getPet()
     if pet then
     end

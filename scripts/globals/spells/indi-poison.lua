@@ -11,7 +11,6 @@ end
 
 
 function onSpellCast(caster, target, spell)
-    caster:removeAllIndicolure()
     caster:addStatusEffectEx(tpz.effect.INDI_POISON, tpz.effect.COLURE_ACTIVE, 10, 3, 10)
     return tpz.effect.INDI_POISON
 end

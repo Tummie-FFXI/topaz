@@ -21,7 +21,9 @@ CLuopanEntity::CLuopanEntity()
 }
 
 CLuopanEntity::~CLuopanEntity()
-{}
+{
+    Die();
+}
 
 void CLuopanEntity::PostTick()
 {

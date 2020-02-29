@@ -974,13 +974,6 @@ namespace petutils
             puppetutils::LoadAutomaton(static_cast<CCharEntity*>(PMaster));
             PMaster->PPet = static_cast<CCharEntity*>(PMaster)->PAutomaton;
         }
-        else if (PMaster->objtype == TYPE_PC && PetID == PETID_LUOPAN)
-        {
-            auto master = static_cast<CCharEntity*>(PMaster);
-            delete master->PLuopan;
-            master->PLuopan = new CLuopanEntity();
-            PMaster->PPet = master->PLuopan;
-        }
         else
         {
             LoadPet(PMaster, PetID, spawningFromZone);
@@ -1525,6 +1518,10 @@ namespace petutils
         {
             petType = PETTYPE_AUTOMATON;
         }
+        else if (PetID == PETID_LUOPAN)
+        {
+            petType = PETTYPE_LUOPAN;
+        }
 
         CPetEntity* PPet = nullptr;
         if (petType == PETTYPE_AUTOMATON && PMaster->objtype == TYPE_PC)
@@ -1718,6 +1715,9 @@ namespace petutils
                 PPet->addModifier(Mod::EVA, PChar->PMeritPoints->GetMeritValue(MERIT_FINE_TUNING, PChar));
                 PPet->addModifier(Mod::MDEF, PChar->PMeritPoints->GetMeritValue(MERIT_FINE_TUNING, PChar));
             }
+        }
+        else if (PPet->getPetType() == PETTYPE_LUOPAN && PMaster->objtype == TYPE_PC)
+        {
         }
 
         FinalizePetStatistics(PMaster, PPet);
