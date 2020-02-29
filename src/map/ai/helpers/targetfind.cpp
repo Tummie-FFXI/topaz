@@ -267,6 +267,10 @@ void CTargetFind::addAllInEnmityList()
     }
 }
 
+void CTargetFind::addAllInRange(CBattleEntity* PTarget, float radius, uint16 flags)
+{
+}
+
 void CTargetFind::addEntity(CBattleEntity* PTarget, bool withPet)
 {
     if (validEntity(PTarget)){

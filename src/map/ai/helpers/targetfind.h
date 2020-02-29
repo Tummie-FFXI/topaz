@@ -99,6 +99,7 @@ public:
 	void addAllInParty(CBattleEntity* PTarget, bool withPet);
 	void addAllInMobList(CBattleEntity* PTarget, bool withPet);
     void addAllInEnmityList();
+    void addAllInRange(CBattleEntity* PTarget, float radius, uint16 flags = 0);
 	void addEntity(CBattleEntity* PTarget, bool withPet);
 
     // helpers
