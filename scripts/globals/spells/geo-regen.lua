@@ -1,8 +1,7 @@
 -----------------------------------------
--- Spell: Indi-Poison
+-- Spell: Geo-Regen
 -----------------------------------------
-require("scripts/globals/status")
-require("scripts/globals/msg")
+require("scripts/globals/pets")
 -----------------------------------------
 
 function onMagicCastingCheck(caster, target, spell)
@@ -11,7 +10,9 @@ end
 
 
 function onSpellCast(caster, target, spell)
-    caster:removeAllIndicolure()
-    caster:addStatusEffectEx(tpz.effect.INDI_POISON, tpz.effect.COLURE_ACTIVE, 10, 3, 10)
-    return tpz.effect.INDI_POISON
+    tpz.pet.spawnPet(player, tpz.pet.id.LUOPAN)
+    local pet = player:getPet()
+    if pet then
+    end
+    return 0
 end

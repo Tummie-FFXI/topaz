@@ -11,6 +11,8 @@ end
 
 function onSpellCast(caster, target, spell)
     tpz.pet.spawnPet(player, tpz.pet.id.LUOPAN)
-    -- Add effect to Luopan
+    local pet = caster:getPet()
+    if pet then
+    end
     return 0
 end
