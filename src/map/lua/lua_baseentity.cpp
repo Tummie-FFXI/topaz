@@ -13577,6 +13577,37 @@ inline int32 CLuaBaseEntity::getTrickAttackChar(lua_State *L)
 }
 
 /************************************************************************
+*  Function: getTargetsWithinArea()
+*  Purpose :
+*  Example :
+*  Notes   :
+************************************************************************/
+
+inline int32 CLuaBaseEntity::getTargetsWithinArea(lua_State* L) {
+    TPZ_DEBUG_BREAK_IF(m_PBaseEntity->objtype == TYPE_NPC);
+    CBattleEntity * PEntity = (CBattleEntity*)m_PBaseEntity;
+
+    float radius = (float)lua_tonumber(L, 1);
+    uint16 flags = lua_isnil(L, 2) ? 0 : lua_tointeger(L, 2);
+
+    PEntity->PAI->TargetFind->reset();
+    PEntity->PAI->TargetFind->addAllInRange(PEntity, radius, flags);
+    uint16 size = (uint16)PEntity->PAI->TargetFind->m_targets.size();
+    lua_createtable(L, size, 0);
+	int i = 1;
+	for (auto PTarget : PEntity->PAI->TargetFind->m_targets) {
+		lua_getglobal(L, CLuaBaseEntity::className);
+		lua_pushstring(L, "new");
+		lua_gettable(L, -2);
+		lua_insert(L, -2);
+		lua_pushlightuserdata(L, (void*)PTarget);
+		lua_pcall(L, 2, 1, 0);
+		lua_rawseti(L, -2, i++);
+	};
+	return true;
+};
+
+/************************************************************************
 *  Function: actionQueueEmpty()
 *  Purpose : Returns true if a Mob's action queue is empty
 *  Example : if (mob:actionQueueEmpty() == true) then

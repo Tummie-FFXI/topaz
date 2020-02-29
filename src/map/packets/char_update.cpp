@@ -103,6 +103,16 @@ CCharUpdatePacket::CCharUpdatePacket(CCharEntity* PChar)
     }
     ref<uint64>(0x4C) = PChar->StatusEffectContainer->m_Flags;
 
+	if (PChar->StatusEffectContainer->HasStatusEffect(EFFECT_INDI_POISON))
+	{
+	    ref<uint8>(0x58) = 0x5D;
+	}
+
+	if (PChar->StatusEffectContainer->HasStatusEffect(EFFECT_INDI_REGEN))
+	{
+	    ref<uint8>(0x58) = 0x56;
+	}
+
     if (PChar->animation == ANIMATION_MOUNT)
         ref<uint16>(0x5B) = PChar->StatusEffectContainer->GetStatusEffect(EFFECT_MOUNTED)->GetPower();
 }
