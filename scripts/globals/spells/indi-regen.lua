@@ -11,6 +11,6 @@ end
 
 
 function onSpellCast(caster, target, spell)
-    caster:addStatusEffectEx(tpz.effect.INDI_REGEN, tpz.effect.COLURE_ACTIVE, 10, 3, 10)
+    caster:addStatusEffectEx(tpz.effect.INDI_REGEN, tpz.effect.COLURE_ACTIVE, 10, 3, 180)
     return tpz.effect.INDI_REGEN
 end

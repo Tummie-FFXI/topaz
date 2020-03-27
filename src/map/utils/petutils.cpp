@@ -1725,6 +1725,13 @@ namespace petutils
         }
         else if (PPet->getPetType() == PETTYPE_LUOPAN && PMaster->objtype == TYPE_PC)
         {
+            PPet->SetMLevel(PMaster->GetMLevel());
+
+            PPet->health.maxhp = PMaster->GetMaxHP();
+            PPet->health.hp = PPet->health.maxhp;
+
+            PPet->addModifier(Mod::DMG, -50);
+
             // Just sit, do nothing
             PPet->PAI->PathFind = nullptr;
             PPet->PAI->SetController(nullptr);
