@@ -15,4 +15,14 @@ tpz.geo.spawnLuopan = function(player, effect)
 
     -- Attach effect
     local luopan = player:getPet()
+    luopan:addStatusEffectEx(effect, tpz.effect.COLURE_ACTIVE, 100, 3, 600)
+
+    -- Set HP loss over time
+end
+
+tpz.geo.applyEffectOverArea = function(target, effect)
+    local nearbyTargets = target:getTargetsWithinArea(12, 8)
+    for _, t in ipairs(nearbyTargets) do
+        print(t:getName())
+    end
 end

@@ -1536,8 +1536,15 @@ namespace petutils
 
         PPet->loc = PMaster->loc;
 
-        // spawn me randomly around master
-        PPet->loc.p = nearPosition(PMaster->loc.p, CPetController::PetRoamDistance, (float)M_PI);
+        if (petType == PETTYPE_LUOPAN)
+        {
+            PPet->loc.p = nearPosition(PMaster->loc.p, 1.0f, 0.0f);
+        }
+        else
+        {
+            // spawn me randomly around master
+            PPet->loc.p = nearPosition(PMaster->loc.p, CPetController::PetRoamDistance, (float)M_PI);
+        }
 
         if (petType != PETTYPE_AUTOMATON)
         {

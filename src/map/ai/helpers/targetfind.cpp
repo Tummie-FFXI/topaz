@@ -269,6 +269,17 @@ void CTargetFind::addAllInEnmityList()
 
 void CTargetFind::addAllInRange(CBattleEntity* PTarget, float radius, uint16 flags)
 {
+    m_radius = radius;
+    m_PRadiusAround = &(m_PBattleEntity->loc.p);
+
+    // TODO: Flags for mobs, etc.
+    zoneutils::GetZone(PTarget->getZone())->ForEachCharInstance(PTarget, [&](CCharEntity* PChar)
+    {
+        if (PChar && isWithinArea(&(PChar->loc.p)) && !PChar->isDead())
+        {
+            m_targets.push_back(PChar);
+        }
+    });
 }
 
 void CTargetFind::addEntity(CBattleEntity* PTarget, bool withPet)

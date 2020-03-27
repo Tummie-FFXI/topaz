@@ -1,5 +1,5 @@
 -----------------------------------
--- Indi-Regen
+-- Geo-Regen
 -----------------------------------
 require("scripts/globals/geo")
 require("scripts/globals/status")

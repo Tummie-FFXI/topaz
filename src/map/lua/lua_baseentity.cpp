@@ -13585,7 +13585,8 @@ inline int32 CLuaBaseEntity::getTrickAttackChar(lua_State *L)
 
 inline int32 CLuaBaseEntity::getTargetsWithinArea(lua_State* L) {
     TPZ_DEBUG_BREAK_IF(m_PBaseEntity->objtype == TYPE_NPC);
-    CBattleEntity * PEntity = (CBattleEntity*)m_PBaseEntity;
+
+    CBattleEntity* PEntity = (CBattleEntity*)m_PBaseEntity;
 
     float radius = (float)lua_tonumber(L, 1);
     uint16 flags = lua_isnil(L, 2) ? 0 : lua_tointeger(L, 2);
@@ -14680,6 +14681,7 @@ Lunar<CLuaBaseEntity>::Register_t CLuaBaseEntity::methods[] =
     LUNAR_DECLARE_METHOD(CLuaBaseEntity,updateTarget),
     LUNAR_DECLARE_METHOD(CLuaBaseEntity,getEnmityList),
     LUNAR_DECLARE_METHOD(CLuaBaseEntity,getTrickAttackChar),
+    LUNAR_DECLARE_METHOD(CLuaBaseEntity,getTargetsWithinArea),
 
     LUNAR_DECLARE_METHOD(CLuaBaseEntity,actionQueueEmpty),
 
