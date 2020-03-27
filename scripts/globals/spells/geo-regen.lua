@@ -1,7 +1,8 @@
 -----------------------------------------
 -- Spell: Geo-Regen
 -----------------------------------------
-require("scripts/globals/pets")
+require("scripts/globals/geo")
+require("scripts/globals/status")
 -----------------------------------------
 
 function onMagicCastingCheck(caster, target, spell)
@@ -10,9 +11,5 @@ end
 
 
 function onSpellCast(caster, target, spell)
-    tpz.pet.spawnPet(caster, tpz.pet.id.LUOPAN)
-    local pet = caster:getPet()
-    if pet then
-    end
-    return 0
+    tpz.geo.spawnLuopan(caster, tpz.effect.INDI_REGEN)
 end
