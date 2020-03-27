@@ -1718,6 +1718,9 @@ namespace petutils
         }
         else if (PPet->getPetType() == PETTYPE_LUOPAN && PMaster->objtype == TYPE_PC)
         {
+            // Just sit, do nothing
+            PPet->PAI->PathFind = nullptr;
+            PPet->PAI->SetController(nullptr);
         }
 
         FinalizePetStatistics(PMaster, PPet);

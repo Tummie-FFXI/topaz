@@ -17,25 +17,15 @@
 CLuopanEntity::CLuopanEntity()
     : CPetEntity(PETTYPE_LUOPAN)
 {
-    PAI->SetController(nullptr);
 }
 
 CLuopanEntity::~CLuopanEntity()
 {
-    Die();
 }
 
 void CLuopanEntity::PostTick()
 {
-    auto pre_mask = updatemask;
     CPetEntity::PostTick();
-    if (pre_mask && status != STATUS_DISAPPEAR)
-    {
-        if (PMaster && PMaster->objtype == TYPE_PC)
-        {
-            //((CCharEntity*)PMaster)->pushPacket(new CCharJobExtraPacket((CCharEntity*)PMaster, PMaster->GetMJob() == JOB_PUP));
-        }
-    }
 }
 
 void CLuopanEntity::FadeOut()
@@ -50,12 +40,4 @@ void CLuopanEntity::Die()
 
 void CLuopanEntity::Spawn()
 {
-    status = allegiance == ALLEGIANCE_MOB ? STATUS_MOB : STATUS_NORMAL;
-    updatemask |= UPDATE_HP;
-    PAI->Reset();
-    PAI->EventHandler.triggerListener("SPAWN", this);
-    animation = ANIMATION_NONE;
-    m_OwnerID.clean();
-    HideName(false);
-    luautils::OnMobSpawn(this);
 }
