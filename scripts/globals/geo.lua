@@ -21,8 +21,8 @@ tpz.geo.spawnLuopan = function(player, effect)
     luopan:addMod(tpz.mod.REGEN_DOWN, 24);
 end
 
-tpz.geo.applyEffectOverArea = function(target, effect)
-    local nearbyTargets = target:getTargetsWithinArea(12, 8)
+tpz.geo.applyEffectOverArea = function(target, effect, allegiance)
+    local nearbyTargets = target:getTargetsWithinArea(12, 8, allegiance)
     for _, t in ipairs(nearbyTargets) do
         t:addStatusEffectEx(effect, effect, 10, 3, 3, false)
     end

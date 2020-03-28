@@ -13589,10 +13589,10 @@ inline int32 CLuaBaseEntity::getTargetsWithinArea(lua_State* L) {
     CBattleEntity* PEntity = (CBattleEntity*)m_PBaseEntity;
 
     float radius = (float)lua_tonumber(L, 1);
-    uint16 flags = lua_isnil(L, 2) ? 0 : lua_tointeger(L, 2);
+    uint8 allegiance = lua_isnil(L, 2) ? 0 : lua_tointeger(L, 2);
 
     PEntity->PAI->TargetFind->reset();
-    PEntity->PAI->TargetFind->addAllInRange(PEntity, radius, flags);
+    PEntity->PAI->TargetFind->addAllInRange(PEntity, radius, allegiance);
     uint16 size = (uint16)PEntity->PAI->TargetFind->m_targets.size();
     lua_createtable(L, size, 0);
 	int i = 1;
