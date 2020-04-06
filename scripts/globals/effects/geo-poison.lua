@@ -9,7 +9,7 @@ function onEffectGain(target, effect)
 end
 
 function onEffectTick(target, effect)
-    tpz.geo.applyEffectOverArea(target, tpz.effect.POISON_II, tpz.allegiance.MOB)
+    target:addAura(tpz.effect.REGEN_II, 10, 3, 3)
 end
 
 function onEffectLose(target, effect)

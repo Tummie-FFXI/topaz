@@ -8705,6 +8705,35 @@ inline int32 CLuaBaseEntity::forMembersInRange(lua_State* L)
     return 0;
 }
 
+inline int32 CLuaBaseEntity::addAura(lua_State* L)
+{
+    TPZ_DEBUG_BREAK_IF(m_PBaseEntity == nullptr);
+
+    int32 n = lua_gettop(L);
+
+    CBattleEntity* PEntity = static_cast<CBattleEntity*>(m_PBaseEntity);
+
+    PEntity->ForParty([&](CBattleEntity* PMember)
+    {
+        if (PMember != nullptr && PEntity->loc.zone->GetID() == PMember->loc.zone->GetID() && distance(PEntity->loc.p, PMember->loc.p) <= 10)
+        {
+            CStatusEffect* PEffect = new CStatusEffect(
+                (EFFECT)lua_tointeger(L, 1), // Effect ID
+                (uint16)lua_tointeger(L, 1), // Effect Icon (Associated with ID)
+                (uint16)lua_tointeger(L, 2), // Power
+                (uint16)lua_tointeger(L, 3), // Tick
+                (uint16)lua_tointeger(L, 4), // Duration
+                (n >= 5 ? (uint16)lua_tointeger(L, 5) : 0),  // SubID
+                (n >= 6 ? (uint16)lua_tointeger(L, 6) : 0),  // Sub Power
+                (n >= 7 ? (uint16)lua_tointeger(L, 7) : 0)); // Tier
+
+            PEffect->SetFlag(EFFECTFLAG_NO_LOSS_MESSAGE);
+            PMember->StatusEffectContainer->AddStatusEffect(PEffect, true);
+        }
+    });
+    return 0;
+}
+
 /************************************************************************
 *  Function: addPartyEffect()
 *  Purpose : Adds effect to members of the entire party
@@ -14429,6 +14458,7 @@ Lunar<CLuaBaseEntity>::Register_t CLuaBaseEntity::methods[] =
     LUNAR_DECLARE_METHOD(CLuaBaseEntity,getPartyLeader),
     LUNAR_DECLARE_METHOD(CLuaBaseEntity,getLeaderID),
     LUNAR_DECLARE_METHOD(CLuaBaseEntity,forMembersInRange),
+    LUNAR_DECLARE_METHOD(CLuaBaseEntity,addAura),
 
     LUNAR_DECLARE_METHOD(CLuaBaseEntity,addPartyEffect),
     LUNAR_DECLARE_METHOD(CLuaBaseEntity,hasPartyEffect),
