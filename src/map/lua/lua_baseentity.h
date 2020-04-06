@@ -417,7 +417,6 @@ public:
     int32 getLeaderID(lua_State* L);              // Get the id of the alliance/party leader *falls back to player id if no party*
 
     int32 forMembersInRange(lua_State* L);
-    int32 addAura(lua_State* L);
 
     int32 addPartyEffect(lua_State*);               // Adds Effect to all party members
     int32 hasPartyEffect(lua_State*);               // Has Effect from all party members

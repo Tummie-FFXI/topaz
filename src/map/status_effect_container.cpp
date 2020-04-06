@@ -1448,6 +1448,40 @@ void CStatusEffectContainer::CheckEffectsExpiry(time_point tick)
     DeleteStatusEffects();
 }
 
+
+void CStatusEffectContainer::TickAuras(time_point tick)
+{
+    TPZ_DEBUG_BREAK_IF(m_POwner == nullptr);
+
+    if (!m_POwner->isDead())
+    {
+        for (const auto& PStatusEffect : m_StatusEffectList)
+        {
+            bool isAura = PStatusEffect->GetFlag() & EFFECTFLAG_AURA;
+            if (isAura && PStatusEffect->GetTickTime() != 0 &&
+                PStatusEffect->GetElapsedTickCount() <= std::chrono::duration_cast<std::chrono::milliseconds>(tick - PStatusEffect->GetStartTime()).count() / PStatusEffect->GetTickTime())
+            {
+                CBattleEntity* PEntity = static_cast<CBattleEntity*>(m_POwner);
+
+                PEntity->ForParty([&](CBattleEntity* PMember)
+                {
+                    if (PMember != nullptr && PEntity->loc.zone->GetID() == PMember->loc.zone->GetID() && distance(PEntity->loc.p, PMember->loc.p) <= 10)
+                    {
+                        CStatusEffect* PEffect = new CStatusEffect(
+                            (EFFECT)PStatusEffect->GetSubID(), // Effect ID
+                            (uint16)PStatusEffect->GetSubID(), // Effect Icon (Associated with ID)
+                            (uint16)PStatusEffect->GetSubPower(), // Power
+                            (uint32)3, // Tick
+                            (uint32)3); // Duration
+                        PEffect->SetFlag(EFFECTFLAG_NO_LOSS_MESSAGE);
+                        PMember->StatusEffectContainer->AddStatusEffect(PEffect, true);
+                    }
+                });
+            }
+        }
+    }
+}
+
 /************************************************************************
 *                                                                       *
 *  Runs OnEffectTick for all status effects                             *

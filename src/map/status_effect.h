@@ -68,6 +68,7 @@ enum EFFECTFLAG
     EFFECTFLAG_NO_CANCEL        = 0x800000, // CAN NOT CLICK IT OFF IN CLIENT
     EFFECTFLAG_INFLUENCE        = 0x1000000, // Influence effects - e.g. Signet, Sanction, Sigil, Ionis
     EFFECTFLAG_OFFLINE_TICK     = 0x2000000, // Duration elapses while offline
+    EFFECTFLAG_AURA             = 0x4000000, // Duration elapses while offline
 };
 
 enum EFFECT

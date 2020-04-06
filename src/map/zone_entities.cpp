@@ -930,6 +930,7 @@ void CZoneEntities::ZoneServer(time_point tick, bool check_regions)
         PMob->StatusEffectContainer->CheckEffectsExpiry(tick);
         if(tick > m_EffectCheckTime)
         {
+            PMob->StatusEffectContainer->TickAuras(tick);
             PMob->StatusEffectContainer->TickRegen(tick);
             PMob->StatusEffectContainer->TickEffects(tick);
         }
@@ -951,6 +952,7 @@ void CZoneEntities::ZoneServer(time_point tick, bool check_regions)
         PPet->StatusEffectContainer->CheckEffectsExpiry(tick);
         if(tick > m_EffectCheckTime)
         {
+            PPet->StatusEffectContainer->TickAuras(tick);
             PPet->StatusEffectContainer->TickRegen(tick);
             PPet->StatusEffectContainer->TickEffects(tick);
         }
@@ -983,6 +985,7 @@ void CZoneEntities::ZoneServer(time_point tick, bool check_regions)
             PChar->StatusEffectContainer->CheckEffectsExpiry(tick);
             if (tick > m_EffectCheckTime)
             {
+                PChar->StatusEffectContainer->TickAuras(tick);
                 PChar->StatusEffectContainer->TickRegen(tick);
                 PChar->StatusEffectContainer->TickEffects(tick);
             }

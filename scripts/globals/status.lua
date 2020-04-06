@@ -864,6 +864,8 @@ tpz.effectFlag =
     ON_JOBCHANGE    = 0x400000,
     NO_CANCEL       = 0x800000,
     INFLUENCE       = 0x1000000,
+    OFFLINE_TICK    = 0x2000000,
+    AURA            = 0x4000000,
 }
 
 ------------------------------------
