@@ -10,5 +10,5 @@ end
 
 
 function onSpellCast(caster, target, spell)
-    tpz.geo.spawnLuopan(caster, tpz.effect.INDI_POISON)
+    tpz.geo.spawnLuopan(caster, tpz.effect.INDI_POISON, tpz.effect.POISON_II)
 end
