@@ -1462,18 +1462,20 @@ void CStatusEffectContainer::TickAuras(time_point tick)
                 PStatusEffect->GetElapsedTickCount() <= std::chrono::duration_cast<std::chrono::milliseconds>(tick - PStatusEffect->GetStartTime()).count() / PStatusEffect->GetTickTime())
             {
                 CBattleEntity* PEntity = static_cast<CBattleEntity*>(m_POwner);
-
+                if (PEntity->objtype == TYPE_PET)
+                {
+                    PEntity = PEntity->PMaster;
+                }
                 PEntity->ForParty([&](CBattleEntity* PMember)
                 {
-                    if (PMember != nullptr && PEntity->loc.zone->GetID() == PMember->loc.zone->GetID() && distance(PEntity->loc.p, PMember->loc.p) <= 10)
+                    if (PMember != nullptr && PEntity->loc.zone->GetID() == PMember->loc.zone->GetID() && distance(m_POwner->loc.p, PMember->loc.p) <= PStatusEffect->GetPower())
                     {
                         CStatusEffect* PEffect = new CStatusEffect(
                             (EFFECT)PStatusEffect->GetSubID(), // Effect ID
                             (uint16)PStatusEffect->GetSubID(), // Effect Icon (Associated with ID)
                             (uint16)PStatusEffect->GetSubPower(), // Power
-                            (uint32)3, // Tick
-                            (uint32)3); // Duration
-                        PEffect->SetFlag(EFFECTFLAG_NO_LOSS_MESSAGE);
+                            3, // Tick
+                            3); // Duration
                         PMember->StatusEffectContainer->AddStatusEffect(PEffect, true);
                     }
                 });

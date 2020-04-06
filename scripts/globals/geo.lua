@@ -15,7 +15,7 @@ tpz.geo.spawnLuopan = function(player, effect)
 
     -- Attach effect
     local luopan = player:getPet()
-    luopan:addStatusEffectEx(tpz.effect.COLURE_ACTIVE, tpz.effect.COLURE_ACTIVE, 0, 3, 12, effect, 10, 0, tpz.effectFlag.AURA)
+    luopan:addStatusEffectEx(tpz.effect.INDI_REGEN, tpz.effect.COLURE_ACTIVE, 10, 3, 0, tpz.effect.REGEN_II, 10, 0, tpz.effectFlag.AURA)
 
     -- Set HP loss over time
     luopan:addMod(tpz.mod.REGEN_DOWN, 24);
