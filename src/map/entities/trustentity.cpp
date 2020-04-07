@@ -32,6 +32,12 @@ along with this program.  If not, see http://www.gnu.org/licenses/
 #include "../ai/states/ability_state.h"
 #include "../utils/battleutils.h"
 #include "../utils/trustutils.h"
+#include "../ai/states/attack_state.h"
+#include "../ai/states/weaponskill_state.h"
+#include "../ai/states/mobskill_state.h"
+#include "../ai/states/magic_state.h"
+#include "../recast_container.h"
+#include "../mob_spell_container.h"
 
 CTrustEntity::CTrustEntity(CCharEntity* PChar)
 {
@@ -107,4 +113,15 @@ void CTrustEntity::OnDespawn(CDespawnState&)
     }
     FadeOut();
     PAI->EventHandler.triggerListener("DESPAWN", this);
+}
+
+
+void CTrustEntity::OnCastFinished(CMagicState& state, action_t& action)
+{
+    CBattleEntity::OnCastFinished(state, action);
+
+    auto PSpell = state.GetSpell();
+    auto PTarget = static_cast<CBattleEntity*>(state.GetTarget());
+
+    PRecastContainer->Add(RECAST_MAGIC, static_cast<uint16>(PSpell->getID()), action.recast);
 }
