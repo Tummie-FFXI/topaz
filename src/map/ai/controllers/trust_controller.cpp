@@ -28,6 +28,8 @@ along with this program.  If not, see http://www.gnu.org/licenses/
 #include "../../entities/charentity.h"
 #include "../../entities/trustentity.h"
 #include "../../packets/char.h"
+#include "../../recast_container.h"
+#include "../../mob_spell_container.h"
 
 CTrustController::CTrustController(CCharEntity* PChar, CTrustEntity* PTrust) : CMobController(PTrust)
 {
@@ -86,6 +88,7 @@ void CTrustController::DoCombatTick(time_point tick)
         m_LastTopEnmity = nullptr;
     }
 
+    auto PMaster = static_cast<CCharEntity*>(POwner->PMaster);
     float currentDistance = distance(POwner->loc.p, POwner->PMaster->loc.p);
     PTarget = POwner->GetBattleTarget();
     uint8 currentPartyPos = GetPartyPosition();
@@ -104,12 +107,12 @@ void CTrustController::DoCombatTick(time_point tick)
                 }
                 else if (POwner->GetSpeed() > 0)
                 {
-                    POwner->PAI->PathFind->WarpTo(POwner->PMaster->loc.p, RoamDistance);
+                    POwner->PAI->PathFind->WarpTo(PMaster->loc.p, RoamDistance);
                 }
             }
             else
             {
-                for (auto POtherTrust : static_cast<CCharEntity*>(POwner->PMaster)->PTrusts)
+                for (auto POtherTrust : PMaster->PTrusts)
                 {
                     if (POtherTrust != POwner && !POtherTrust->PAI->PathFind->IsFollowingPath() && distance(POtherTrust->loc.p, POwner->loc.p) < 1.0f)
                     {
@@ -132,11 +135,85 @@ void CTrustController::DoCombatTick(time_point tick)
         auto currentTopEnmity = GetTopEnmity();
         if (m_LastTopEnmity != currentTopEnmity)
         {
-            POwner->PAI->EventHandler.triggerListener("ENMITY_CHANGED", POwner, POwner->PMaster, PTarget);
+            POwner->PAI->EventHandler.triggerListener("ENMITY_CHANGED", POwner, PMaster, PTarget);
             m_LastTopEnmity = currentTopEnmity;
         }
 
-        POwner->PAI->EventHandler.triggerListener("COMBAT_TICK", POwner, POwner->PMaster, PTarget);
+        auto findBestAvailableSpell = [&](CMobEntity* mob, std::vector<SpellID> spellList, std::vector<uint16> desiredList)
+        {
+            std::vector<SpellID> candidateSpells;
+            for (SpellID spellID : spellList)
+            {
+                // TODO: Get full spells on spawn
+                auto spell = spell::GetSpell(spellID);
+                if (!mob->PRecastContainer->Has(RECAST_MAGIC, static_cast<uint16>(spellID)) && POwner->health.mp >= spell->getMPCost())
+                {
+                    candidateSpells.push_back(spellID);
+                }
+            }
+
+            std::optional<SpellID> best;
+            for (auto spell : candidateSpells)
+            {
+                auto it = std::find(desiredList.begin(), desiredList.end(), static_cast<uint16>(spell));
+                if (it != desiredList.end())
+                {
+                    best = static_cast<SpellID>(*it);
+                }
+            }
+
+            return best;
+        };
+
+        auto POwnerMob = static_cast<CMobEntity*>(POwner);
+        auto spellContainer = POwnerMob->SpellContainer;
+
+        auto bestCure = findBestAvailableSpell(POwnerMob, spellContainer->m_healList, { 1, 2, 3, 4, 5, 6 });
+        auto bestProtectra = findBestAvailableSpell(POwnerMob, spellContainer->m_buffList, { 125, 126, 127, 128, 129 });
+        auto bestShellra = findBestAvailableSpell(POwnerMob, spellContainer->m_buffList, { 130, 131, 132, 133, 134 });
+
+        auto partyIsCoveredByEffect = [](CCharEntity* master, uint32 effect)
+        {
+            bool someoneNeedsBuff = false;
+            master->ForPartyWithTrusts([&someoneNeedsBuff, effect](CBattleEntity* entity)
+            {
+                if (!entity->StatusEffectContainer->HasStatusEffect(static_cast<EFFECT>(effect)))
+                {
+                    someoneNeedsBuff = true;
+                    return;
+                }
+            });
+            return someoneNeedsBuff;
+        };
+
+        auto someoneNeedsProtect = partyIsCoveredByEffect(PMaster, EFFECT_PROTECT);
+        auto someoneNeedsShell = partyIsCoveredByEffect(PMaster, EFFECT_SHELL);
+
+        std::optional<CBattleEntity*> memberNeedsCure;
+        PMaster->ForPartyWithTrusts([&memberNeedsCure](CBattleEntity* member)
+        {
+            if (member->GetHPP() <= 75)
+            {
+                memberNeedsCure = member;
+            }
+        });
+
+        if (memberNeedsCure.has_value() && bestCure.has_value())
+        {
+            Cast(memberNeedsCure.value()->targid, bestCure.value());
+        }
+
+        if (someoneNeedsProtect && CanCastSpells() && bestProtectra.has_value())
+        {
+            CastSpell(bestProtectra.value());
+        }
+
+        if (someoneNeedsShell && CanCastSpells() && bestShellra.has_value())
+        {
+            CastSpell(bestShellra.value());
+        }
+
+        POwner->PAI->EventHandler.triggerListener("COMBAT_TICK", POwner, PMaster, PTarget);
     }
 }
 

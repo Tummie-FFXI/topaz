@@ -43,6 +43,8 @@ public:
     bool ValidTarget(CBattleEntity* PInitiator, uint16 targetFlags) override;
     void OnDespawn(CDespawnState&) override;
 
+    void OnCastFinished(CMagicState& state, action_t& action);
+
     uint32 m_TrustID{};
 };
 
