@@ -348,6 +348,7 @@ bool CTrustController::TryCastSpell()
     if (chosenSpellId.has_value() && m_Tick >= m_LastRandomSpellTime + std::chrono::seconds(tpzrand::GetRandomNumber(30, 60)))
     {
         m_LastRandomSpellTime = m_Tick;
+        POwner->PRecastContainer->Add(RECAST_MAGIC, static_cast<uint16>(chosenSpellId.value()), 60000);
         CastSpell(chosenSpellId.value());
         return true;
     }
