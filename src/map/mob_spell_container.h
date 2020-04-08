@@ -59,6 +59,8 @@ public:
   void AddSpell(SpellID spellId);
   void RemoveSpell(SpellID spellId);
 
+  std::optional<SpellID> GetBestAvailable(SPELLFAMILY family);
+
   std::vector<SpellID> m_gaList;
   std::vector<SpellID> m_damageList;
   std::vector<SpellID> m_buffList;

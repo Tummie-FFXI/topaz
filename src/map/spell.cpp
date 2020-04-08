@@ -173,6 +173,37 @@ bool CSpell::canHitShadow()
     return m_ID != SpellID::Meteor_II && canTargetEnemy();
 }
 
+SPELLFAMILY CSpell::getSpellFamily()
+{
+    // TODO: This should be in the db, hard coded for demo purposes!
+    auto checkFamily = [&](std::vector<uint16> list, SPELLFAMILY family)
+    {
+        auto it = std::find(list.begin(), list.end(), static_cast<uint16>(this->getID()));
+        if (it != list.end())
+        {
+            return true;
+        }
+        return false;
+    };
+
+    if (checkFamily({ 1, 2, 3, 4, 5, 6 }, SPELLFAMILY_CURE))
+    {
+        return SPELLFAMILY_CURE;
+    }
+
+    if (checkFamily({ 125, 126, 127, 128, 129 }, SPELLFAMILY_PROTECTRA))
+    {
+        return SPELLFAMILY_PROTECTRA;
+    }
+
+    if (checkFamily({ 130, 131, 132, 133, 134 }, SPELLFAMILY_SHELLRA))
+    {
+        return SPELLFAMILY_SHELLRA;
+    }
+    
+    return m_spellFamily;
+}
+
 bool CSpell::dealsDamage()
 {
     //damage or drain hp

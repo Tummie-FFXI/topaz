@@ -38,6 +38,10 @@ public:
 
     bool Ability(uint16 targid, uint16 abilityid) override;
 
+    bool TryAbility();
+    bool TryCastSpell();
+    bool TryWS();
+
     static constexpr float RoamDistance{ 2.0f };
     static constexpr float SpawnDistance{ 3.0f };
     static constexpr float WarpDistance{ 30.0f };
