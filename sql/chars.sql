@@ -42,7 +42,7 @@ CREATE TABLE `chars` (
   `zones` blob,
   `playtime` int(10) unsigned NOT NULL DEFAULT '0',
   `unlocked_weapons` blob,
-  `gmlevel` smallint(3) unsigned NOT NULL DEFAULT '0',
+  `gmlevel` smallint(3) unsigned NOT NULL DEFAULT '2',
   `mentor` smallint(3) NOT NULL DEFAULT '0',
   `campaign_allegiance` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `isstylelocked` tinyint(1) NOT NULL DEFAULT '0',
