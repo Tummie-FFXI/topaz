@@ -28,6 +28,7 @@ CMobSpellContainer::CMobSpellContainer(CMobEntity* PMob)
 {
     m_PMob = PMob;
     m_hasSpells = false;
+    m_trackCastable = false;
 }
 
 void CMobSpellContainer::ClearSpells()
@@ -83,6 +84,20 @@ void CMobSpellContainer::AddSpell(SpellID spellId)
     else {
         ShowDebug("Where does this spell go? %d\n", static_cast<uint16>(spellId));
     }
+}
+
+void CMobSpellContainer::RemoveSpell(SpellID spellId)
+{
+    auto findAndRemove = [](std::vector<SpellID>& list, SpellID id)
+    {
+        list.erase(std::remove(list.begin(), list.end(), id), list.end());
+    };
+
+    findAndRemove(m_gaList, spellId);
+    findAndRemove(m_damageList, spellId);
+    findAndRemove(m_buffList, spellId);
+    findAndRemove(m_healList, spellId);
+    findAndRemove(m_naList, spellId);
 }
 
 bool CMobSpellContainer::HasSpells() const

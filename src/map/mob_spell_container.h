@@ -37,7 +37,6 @@ public:
 
   CMobSpellContainer(CMobEntity* PMob);
 
-
   // These methods return a random spell
   std::optional<SpellID> GetAggroSpell(); // -ga spell, dia, bio, paralyze, silence, blind
   std::optional<SpellID> GetGaSpell(); // AoE damage spells, stonega, diaga
@@ -58,7 +57,6 @@ public:
 
   void ClearSpells();
   void AddSpell(SpellID spellId);
-  // TODO:
   void RemoveSpell(SpellID spellId);
 
   std::vector<SpellID> m_gaList;
@@ -70,7 +68,7 @@ public:
 private:
   CMobEntity* m_PMob;
   bool m_hasSpells;
-
+  bool m_trackCastable;
 };
 
 #endif
