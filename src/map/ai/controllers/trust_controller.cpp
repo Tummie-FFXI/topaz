@@ -238,12 +238,17 @@ bool CTrustController::TryCastSpell()
     auto POwnerMob = static_cast<CMobEntity*>(POwner);
     auto spellContainer = POwnerMob->SpellContainer;
 
+    // Check on Spell/Target/Party status
+
     // TODO: Have the Lua dictate which of these spells the trusts cares about, so the container is left alone if there is no
     // spellcasting.
     // For example: trust:maintainBuff(EFFECT_SHELLRA)
     auto bestCure = spellContainer->GetBestAvailable(SPELLFAMILY_CURE);
     auto bestProtectra = spellContainer->GetBestAvailable(SPELLFAMILY_PROTECTRA);
     auto bestShellra = spellContainer->GetBestAvailable(SPELLFAMILY_SHELLRA);
+    auto bestSlow = spellContainer->GetBestAvailable(SPELLFAMILY_SLOW);
+    auto bestParalyze = spellContainer->GetBestAvailable(SPELLFAMILY_PARALYZE);
+    auto bestErase = spellContainer->GetBestAvailable(SPELLFAMILY_ERASE);
 
     auto entirePartyHasEffect = [](CCharEntity* master, uint32 effect)
     {
@@ -271,6 +276,14 @@ bool CTrustController::TryCastSpell()
         }
     });
 
+    auto targetHasEffect = [](CBattleEntity* target, uint32 effect)
+    {
+        if (target == nullptr) return false;
+        return target->StatusEffectContainer->HasStatusEffect(static_cast<EFFECT>(effect));
+    };
+
+    // Cast Spells
+
     if (memberNeedsCure.has_value() && bestCure.has_value())
     {
         return Cast(memberNeedsCure.value()->targid, bestCure.value());
@@ -284,6 +297,16 @@ bool CTrustController::TryCastSpell()
     if (someoneNeedsShell && CanCastSpells() && bestShellra.has_value())
     {
         return Cast(POwner->targid, bestShellra.value());
+    }
+
+    if ((!targetHasEffect(PTarget, EFFECT_SLOW) || !targetHasEffect(PTarget, EFFECT_SLOW_II)) && bestSlow.has_value())
+    {
+        return Cast(PTarget->targid, bestSlow.value());
+    }
+
+    if ((!targetHasEffect(PTarget, EFFECT_PARALYSIS) || !targetHasEffect(PTarget, EFFECT_PARALYSIS_II)) && bestParalyze.has_value())
+    {
+        return Cast(PTarget->targid, bestParalyze.value());
     }
 
     return false;

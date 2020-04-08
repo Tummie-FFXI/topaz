@@ -153,6 +153,14 @@ bool CSpell::isCure()
     return ((static_cast<uint16>(m_ID) >= 1 && static_cast<uint16>(m_ID) <= 11) || m_ID == SpellID::Cura || m_ID == SpellID::Cura_II || m_ID == SpellID::Cura_III);
 }
 
+bool CSpell::isDebuff()
+{
+    return ((getValidTarget() & TARGET_ENEMY) && getSkillType() == SKILL_ENFEEBLING_MAGIC) || m_ID == SpellID::Burn ||
+        m_ID == SpellID::Frost || m_ID == SpellID::Choke || m_ID == SpellID::Rasp || m_ID == SpellID::Shock ||
+        m_ID == SpellID::Drown || m_ID == SpellID::Stun || m_ID == SpellID::Curse || m_ID == SpellID::Bio ||
+        m_ID == SpellID::Bio_II || m_ID == SpellID::Bio_III || m_ID == SpellID::Bio_IV || m_ID == SpellID::Bio_V;
+}
+
 bool CSpell::isNa()
 {
     return (static_cast<uint16>(m_ID) >= 14 && static_cast<uint16>(m_ID) <= 20) || m_ID == SpellID::Erase;
@@ -166,7 +174,7 @@ bool CSpell::canHitShadow()
 SPELLFAMILY CSpell::getSpellFamily()
 {
     // TODO: This should be in the db, hard coded for demo purposes!
-    auto checkFamily = [&](std::vector<uint16> list, SPELLFAMILY family)
+    auto checkList = [&](std::vector<uint16> list)
     {
         auto it = std::find(list.begin(), list.end(), static_cast<uint16>(this->getID()));
         if (it != list.end())
@@ -176,19 +184,34 @@ SPELLFAMILY CSpell::getSpellFamily()
         return false;
     };
 
-    if (checkFamily({ 1, 2, 3, 4, 5, 6 }, SPELLFAMILY_CURE))
+    if (checkList({ 1, 2, 3, 4, 5, 6 }))
     {
         return SPELLFAMILY_CURE;
     }
 
-    if (checkFamily({ 125, 126, 127, 128, 129 }, SPELLFAMILY_PROTECTRA))
+    if (checkList({ 125, 126, 127, 128, 129 }))
     {
         return SPELLFAMILY_PROTECTRA;
     }
 
-    if (checkFamily({ 130, 131, 132, 133, 134 }, SPELLFAMILY_SHELLRA))
+    if (checkList({ 130, 131, 132, 133, 134 }))
     {
         return SPELLFAMILY_SHELLRA;
+    }
+
+    if (checkList({ 56, 79 }))
+    {
+        return SPELLFAMILY_SLOW;
+    }
+
+    if (checkList({ 58, 80 }))
+    {
+        return SPELLFAMILY_PARALYZE;
+    }
+
+    if (checkList({ 143 }))
+    {
+        return SPELLFAMILY_ERASE;
     }
     
     return m_spellFamily;
