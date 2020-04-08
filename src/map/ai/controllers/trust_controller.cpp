@@ -248,7 +248,10 @@ bool CTrustController::TryCastSpell()
     auto bestShellra = spellContainer->GetBestAvailable(SPELLFAMILY_SHELLRA);
     auto bestSlow = spellContainer->GetBestAvailable(SPELLFAMILY_SLOW);
     auto bestParalyze = spellContainer->GetBestAvailable(SPELLFAMILY_PARALYZE);
+    auto bestFlash = spellContainer->GetBestAvailable(SPELLFAMILY_FLASH);
     auto bestErase = spellContainer->GetBestAvailable(SPELLFAMILY_ERASE);
+    auto bestDispel = spellContainer->GetBestAvailable(SPELLFAMILY_DISPEL);
+    auto bestNuke = spellContainer->GetDamageSpell(); // TODO: Picks at random
 
     auto entirePartyHasEffect = [](CCharEntity* master, uint32 effect)
     {
@@ -270,7 +273,8 @@ bool CTrustController::TryCastSpell()
     std::optional<CBattleEntity*> memberNeedsCure;
     PMaster->ForPartyWithTrusts([&memberNeedsCure](CBattleEntity* member)
     {
-        if (member->GetHPP() <= 75) // TODO: Make percent configurable
+        if (member->GetHPP() <= 75 || // TODO: Make percent configurable
+            member->StatusEffectContainer->HasStatusEffect({ EFFECT_SLEEP, EFFECT_SLEEP_II }))
         {
             memberNeedsCure = member;
         }
@@ -282,7 +286,24 @@ bool CTrustController::TryCastSpell()
         return target->StatusEffectContainer->HasStatusEffect(static_cast<EFFECT>(effect));
     };
 
-    // Cast Spells
+    // Cast Spells TODO: Tailored for Kupipi at the moment
+
+    if (bestErase.has_value())
+    {
+        // Prioritize self
+        if (POwner->StatusEffectContainer->HasStatusEffectByFlag(EFFECTFLAG_ERASABLE))
+        {
+            return Cast(POwner->targid, bestErase.value());
+        }
+        PMaster->ForPartyWithTrusts([&](CBattleEntity* member)
+        {
+            if (member->StatusEffectContainer->HasStatusEffectByFlag(EFFECTFLAG_ERASABLE))
+            {
+                return Cast(member->targid, bestErase.value());
+            }
+            return false;
+        });
+    }
 
     if (memberNeedsCure.has_value() && bestCure.has_value())
     {
@@ -299,14 +320,33 @@ bool CTrustController::TryCastSpell()
         return Cast(POwner->targid, bestShellra.value());
     }
 
-    if ((!targetHasEffect(PTarget, EFFECT_SLOW) || !targetHasEffect(PTarget, EFFECT_SLOW_II)) && bestSlow.has_value())
+    // NOTE: Extra recast is added to debuffs to make sure they aren't spammed as much if an enemy resists them or is immune
+
+    if (PTarget->StatusEffectContainer->HasStatusEffectByFlag(EFFECTFLAG_DISPELABLE) && bestDispel.has_value())
     {
+        return Cast(PTarget->targid, bestDispel.value());
+    }
+
+    if (!(targetHasEffect(PTarget, EFFECT_SLOW) || targetHasEffect(PTarget, EFFECT_SLOW_II)) && bestSlow.has_value())
+    {
+        POwner->PRecastContainer->Add(RECAST_MAGIC, static_cast<uint16>(bestSlow.value()), 60000);
         return Cast(PTarget->targid, bestSlow.value());
     }
 
-    if ((!targetHasEffect(PTarget, EFFECT_PARALYSIS) || !targetHasEffect(PTarget, EFFECT_PARALYSIS_II)) && bestParalyze.has_value())
+    if (!(targetHasEffect(PTarget, EFFECT_PARALYSIS) || targetHasEffect(PTarget, EFFECT_PARALYSIS_II)) && bestParalyze.has_value())
     {
+        POwner->PRecastContainer->Add(RECAST_MAGIC, static_cast<uint16>(bestParalyze.value()), 60000);
         return Cast(PTarget->targid, bestParalyze.value());
+    }
+
+    if (!targetHasEffect(PTarget, EFFECT_FLASH) && bestFlash.has_value())
+    {
+        return Cast(PTarget->targid, bestFlash.value());
+    }
+
+    if (bestNuke.has_value())
+    {
+        return Cast(PTarget->targid, bestNuke.value());
     }
 
     return false;
