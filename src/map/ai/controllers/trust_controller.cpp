@@ -251,7 +251,6 @@ bool CTrustController::TryCastSpell()
     auto bestFlash = spellContainer->GetBestAvailable(SPELLFAMILY_FLASH);
     auto bestErase = spellContainer->GetBestAvailable(SPELLFAMILY_ERASE);
     auto bestDispel = spellContainer->GetBestAvailable(SPELLFAMILY_DISPEL);
-    auto bestNuke = spellContainer->GetDamageSpell(); // TODO: Picks at random
 
     auto entirePartyHasEffect = [](CCharEntity* master, uint32 effect)
     {
@@ -344,9 +343,13 @@ bool CTrustController::TryCastSpell()
         return Cast(PTarget->targid, bestFlash.value());
     }
 
-    if (bestNuke.has_value())
+    // Otherwise, cast something random every 30-60 seconds
+    auto chosenSpellId = spellContainer->GetSpell();
+    if (chosenSpellId.has_value() && m_Tick >= m_LastRandomSpellTime + std::chrono::seconds(tpzrand::GetRandomNumber(20, 60)))
     {
-        return Cast(PTarget->targid, bestNuke.value());
+        m_LastRandomSpellTime = m_Tick;
+        CastSpell(chosenSpellId.value());
+        return true;
     }
 
     return false;

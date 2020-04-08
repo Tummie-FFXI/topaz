@@ -56,6 +56,7 @@ private:
     CBattleEntity* m_LastTopEnmity;
     time_point m_CombatEndTime;
     time_point m_LastHealTickTime;
+    time_point m_LastRandomSpellTime;
 };
 
 #endif // _TRUSTCONTROLLER
