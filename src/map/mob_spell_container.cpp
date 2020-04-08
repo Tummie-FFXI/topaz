@@ -22,6 +22,7 @@
 #include "mob_spell_container.h"
 #include "utils/battleutils.h"
 #include "status_effect_container.h"
+#include "recast_container.h"
 #include "mob_modifier.h"
 
 CMobSpellContainer::CMobSpellContainer(CMobEntity* PMob)
@@ -98,6 +99,33 @@ void CMobSpellContainer::RemoveSpell(SpellID spellId)
     findAndRemove(m_buffList, spellId);
     findAndRemove(m_healList, spellId);
     findAndRemove(m_naList, spellId);
+}
+
+std::optional<SpellID> CMobSpellContainer::GetBestAvailable(SPELLFAMILY family)
+{
+    std::vector<SpellID> matches;
+    auto searchInList = [&](std::vector<SpellID>& list)
+    {
+        for (auto id : list)
+        {
+            auto spell = spell::GetSpell(id);
+            bool sameFamily = spell->getSpellFamily() == family;
+            bool hasEnougnMP = spell->getMPCost() <= m_PMob->health.mp;
+            bool isNotInRecast = !m_PMob->PRecastContainer->Has(RECAST_MAGIC, static_cast<uint16>(id));
+            if (sameFamily && hasEnougnMP && isNotInRecast)
+            {
+                matches.push_back(id);
+            }
+        };
+    };
+    searchInList(m_gaList);
+    searchInList(m_damageList);
+    searchInList(m_buffList);
+    searchInList(m_healList);
+    searchInList(m_naList);
+
+    // Assume the highest ID is the best (back of the vector)
+    return (!matches.empty()) ? std::optional<SpellID>{ matches.back() } : std::nullopt;
 }
 
 bool CMobSpellContainer::HasSpells() const

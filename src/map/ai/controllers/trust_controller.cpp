@@ -139,78 +139,17 @@ void CTrustController::DoCombatTick(time_point tick)
             m_LastTopEnmity = currentTopEnmity;
         }
 
-        auto findBestAvailableSpell = [&](CMobEntity* mob, std::vector<SpellID> spellList, std::vector<uint16> desiredList)
+        if (TryAbility())
         {
-            std::vector<SpellID> candidateSpells;
-            for (SpellID spellID : spellList)
-            {
-                // TODO: Get full spells on spawn
-                auto spell = spell::GetSpell(spellID);
-                if (!mob->PRecastContainer->Has(RECAST_MAGIC, static_cast<uint16>(spellID)) && POwner->health.mp >= spell->getMPCost())
-                {
-                    candidateSpells.push_back(spellID);
-                }
-            }
-
-            std::optional<SpellID> best;
-            for (auto spell : candidateSpells)
-            {
-                auto it = std::find(desiredList.begin(), desiredList.end(), static_cast<uint16>(spell));
-                if (it != desiredList.end())
-                {
-                    best = static_cast<SpellID>(*it);
-                }
-            }
-
-            return best;
-        };
-
-        auto POwnerMob = static_cast<CMobEntity*>(POwner);
-        auto spellContainer = POwnerMob->SpellContainer;
-
-        auto bestCure = findBestAvailableSpell(POwnerMob, spellContainer->m_healList, { 1, 2, 3, 4, 5, 6 });
-        auto bestProtectra = findBestAvailableSpell(POwnerMob, spellContainer->m_buffList, { 125, 126, 127, 128, 129 });
-        auto bestShellra = findBestAvailableSpell(POwnerMob, spellContainer->m_buffList, { 130, 131, 132, 133, 134 });
-
-        auto partyIsCoveredByEffect = [](CCharEntity* master, uint32 effect)
-        {
-            bool someoneNeedsBuff = false;
-            master->ForPartyWithTrusts([&someoneNeedsBuff, effect](CBattleEntity* entity)
-            {
-                if (!entity->StatusEffectContainer->HasStatusEffect(static_cast<EFFECT>(effect)))
-                {
-                    someoneNeedsBuff = true;
-                    return;
-                }
-            });
-            return someoneNeedsBuff;
-        };
-
-        auto someoneNeedsProtect = partyIsCoveredByEffect(PMaster, EFFECT_PROTECT);
-        auto someoneNeedsShell = partyIsCoveredByEffect(PMaster, EFFECT_SHELL);
-
-        std::optional<CBattleEntity*> memberNeedsCure;
-        PMaster->ForPartyWithTrusts([&memberNeedsCure](CBattleEntity* member)
-        {
-            if (member->GetHPP() <= 75)
-            {
-                memberNeedsCure = member;
-            }
-        });
-
-        if (memberNeedsCure.has_value() && bestCure.has_value())
-        {
-            Cast(memberNeedsCure.value()->targid, bestCure.value());
+            return;
         }
-
-        if (someoneNeedsProtect && CanCastSpells() && bestProtectra.has_value())
+        else if (TryCastSpell())
         {
-            CastSpell(bestProtectra.value());
+            return;
         }
-
-        if (someoneNeedsShell && CanCastSpells() && bestShellra.has_value())
+        else if (TryWS())
         {
-            CastSpell(bestShellra.value());
+            return;
         }
 
         POwner->PAI->EventHandler.triggerListener("COMBAT_TICK", POwner, PMaster, PTarget);
@@ -283,6 +222,75 @@ bool CTrustController::Ability(uint16 targid, uint16 abilityid)
     {
         return POwner->PAI->Internal_Ability(targid, abilityid);
     }
+    return false;
+}
+
+bool CTrustController::TryAbility()
+{
+    return false;
+}
+
+bool CTrustController::TryCastSpell()
+{
+    auto PMaster = static_cast<CCharEntity*>(POwner->PMaster);
+    auto PParty = PMaster->PParty;
+    auto PTrusts = PMaster->PTrusts;
+    auto POwnerMob = static_cast<CMobEntity*>(POwner);
+    auto spellContainer = POwnerMob->SpellContainer;
+
+    // TODO: Have the Lua dictate which of these spells the trusts cares about, so the container is left alone if there is no
+    // spellcasting.
+    // For example: trust:maintainBuff(EFFECT_SHELLRA)
+    auto bestCure = spellContainer->GetBestAvailable(SPELLFAMILY_CURE);
+    auto bestProtectra = spellContainer->GetBestAvailable(SPELLFAMILY_PROTECTRA);
+    auto bestShellra = spellContainer->GetBestAvailable(SPELLFAMILY_SHELLRA);
+
+    auto entirePartyHasEffect = [](CCharEntity* master, uint32 effect)
+    {
+        bool someoneNeedsBuff = false;
+        master->ForPartyWithTrusts([&someoneNeedsBuff, effect](CBattleEntity* entity)
+        {
+            if (!entity->StatusEffectContainer->HasStatusEffect(static_cast<EFFECT>(effect)))
+            {
+                someoneNeedsBuff = true;
+                return;
+            }
+        });
+        return someoneNeedsBuff;
+    };
+
+    auto someoneNeedsProtect = entirePartyHasEffect(PMaster, EFFECT_PROTECT);
+    auto someoneNeedsShell = entirePartyHasEffect(PMaster, EFFECT_SHELL);
+
+    std::optional<CBattleEntity*> memberNeedsCure;
+    PMaster->ForPartyWithTrusts([&memberNeedsCure](CBattleEntity* member)
+    {
+        if (member->GetHPP() <= 75) // TODO: Make percent configurable
+        {
+            memberNeedsCure = member;
+        }
+    });
+
+    if (memberNeedsCure.has_value() && bestCure.has_value())
+    {
+        return Cast(memberNeedsCure.value()->targid, bestCure.value());
+    }
+
+    if (someoneNeedsProtect && CanCastSpells() && bestProtectra.has_value())
+    {
+        return Cast(POwner->targid, bestProtectra.value());
+    }
+
+    if (someoneNeedsShell && CanCastSpells() && bestShellra.has_value())
+    {
+        return Cast(POwner->targid, bestShellra.value());
+    }
+
+    return false;
+}
+
+bool CTrustController::TryWS()
+{
     return false;
 }
 

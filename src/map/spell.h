@@ -748,6 +748,14 @@ enum class SpellID : uint16
 
 #define MAX_SPELL_ID 1024U
 
+enum SPELLFAMILY
+{
+    SPELLFAMILY_NONE = 0,
+    SPELLFAMILY_CURE = 1,
+    SPELLFAMILY_PROTECTRA = 2,
+    SPELLFAMILY_SHELLRA = 3,
+};
+
 class CSpell
 {
 public:
@@ -794,6 +802,7 @@ public:
     bool        isCure(); // is a Cure spell
     bool        isNa(); // is a -na spell
     bool        canHitShadow(); // check if spell ignores shadows
+    SPELLFAMILY getSpellFamily();
 
     void        setRadius(float radius);
     void        setTotalTargets(uint16 total);
@@ -860,6 +869,7 @@ private:
     uint16      m_meritId {};                              // associated merit (if applicable)
     uint8       m_flag {};
     int8*       m_contentTag {};
+    SPELLFAMILY m_spellFamily { SPELLFAMILY_NONE };
 };
 
 //Namestpace to work with spells
