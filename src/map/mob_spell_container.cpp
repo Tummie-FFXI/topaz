@@ -202,6 +202,11 @@ std::optional<SpellID> CMobSpellContainer::GetSpell()
         return GetDamageSpell();
     }
 
+    if (HasDebuffSpells())
+    {
+        return GetDebuffSpell();
+    }
+
     if(HasBuffSpells())
     {
         return GetBuffSpell();
