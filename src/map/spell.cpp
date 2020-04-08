@@ -209,9 +209,19 @@ SPELLFAMILY CSpell::getSpellFamily()
         return SPELLFAMILY_PARALYZE;
     }
 
+    if (checkList({ 112 }))
+    {
+        return SPELLFAMILY_FLASH;
+    }
+
     if (checkList({ 143 }))
     {
         return SPELLFAMILY_ERASE;
+    }
+
+    if (checkList({ 260 }))
+    {
+        return SPELLFAMILY_DISPEL;
     }
     
     return m_spellFamily;
