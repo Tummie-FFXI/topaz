@@ -345,7 +345,7 @@ bool CTrustController::TryCastSpell()
 
     // Otherwise, cast something random every 30-60 seconds
     auto chosenSpellId = spellContainer->GetSpell();
-    if (chosenSpellId.has_value() && m_Tick >= m_LastRandomSpellTime + std::chrono::seconds(tpzrand::GetRandomNumber(20, 60)))
+    if (chosenSpellId.has_value() && m_Tick >= m_LastRandomSpellTime + std::chrono::seconds(tpzrand::GetRandomNumber(30, 60)))
     {
         m_LastRandomSpellTime = m_Tick;
         CastSpell(chosenSpellId.value());
