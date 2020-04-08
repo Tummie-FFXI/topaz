@@ -37,6 +37,7 @@ void CMobSpellContainer::ClearSpells()
     m_gaList.clear();
     m_damageList.clear();
     m_buffList.clear();
+    m_debuffList.clear();
     m_healList.clear();
     m_naList.clear();
     m_hasSpells = false;
@@ -61,6 +62,10 @@ void CMobSpellContainer::AddSpell(SpellID spellId)
 
         m_gaList.push_back(spellId);
 
+    }
+    else if (spell->isDebuff())
+    {
+        m_debuffList.push_back(spellId);
     }
     else if(spell->canTargetEnemy()){
         // add to damage list
@@ -121,6 +126,7 @@ std::optional<SpellID> CMobSpellContainer::GetBestAvailable(SPELLFAMILY family)
     searchInList(m_gaList);
     searchInList(m_damageList);
     searchInList(m_buffList);
+    searchInList(m_debuffList);
     searchInList(m_healList);
     searchInList(m_naList);
 
@@ -236,6 +242,13 @@ std::optional<SpellID> CMobSpellContainer::GetBuffSpell()
     return m_buffList[tpzrand::GetRandomNumber(m_buffList.size())];
 }
 
+std::optional<SpellID> CMobSpellContainer::GetDebuffSpell()
+{
+    if (m_debuffList.empty()) return {};
+
+    return m_debuffList[tpzrand::GetRandomNumber(m_debuffList.size())];
+}
+
 std::optional<SpellID> CMobSpellContainer::GetHealSpell()
 {
     if(m_PMob->m_EcoSystem == SYSTEM_UNDEAD || m_healList.empty()) return {};
@@ -302,6 +315,11 @@ bool CMobSpellContainer::HasHealSpells() const
 bool CMobSpellContainer::HasNaSpells() const
 {
     return !m_naList.empty();
+}
+
+bool CMobSpellContainer::HasDebuffSpells() const
+{
+    return !m_debuffList.empty();
 }
 
 bool CMobSpellContainer::HasNaSpell(SpellID spellId) const

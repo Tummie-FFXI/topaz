@@ -915,6 +915,9 @@ enum SPELLFAMILY
     SPELLFAMILY_CURE = 1,
     SPELLFAMILY_PROTECTRA = 2,
     SPELLFAMILY_SHELLRA = 3,
+    SPELLFAMILY_SLOW = 4,
+    SPELLFAMILY_PARALYZE = 5,
+    SPELLFAMILY_ERASE = 6,
 };
 
 class CSpell
@@ -962,6 +965,7 @@ public:
     bool        hasMPCost(); // checks if spell costs mp to use
     bool        isHeal(); // is a heal spell
     bool        isCure(); // is a Cure spell
+    bool        isDebuff(); // is a debuff spell
     bool        isNa(); // is a -na spell
     bool        canHitShadow(); // check if spell ignores shadows
     SPELLFAMILY getSpellFamily();
