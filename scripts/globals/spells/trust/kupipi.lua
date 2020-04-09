@@ -49,6 +49,12 @@ SPELLFAMILY_PARALYZE = 5
 SPELLFAMILY_ERASE = 6
 SPELLFAMILY_FLASH = 7
 SPELLFAMILY_DISPEL = 8
+SPELLFAMILY_AERO = 9
+SPELLFAMILY_BLIZZARD = 10
+SPELLFAMILY_FIRE = 11
+SPELLFAMILY_STONE = 12
+SPELLFAMILY_THUNDER = 13
+SPELLFAMILY_WATER = 14
 
 function onMagicCastingCheck(caster, target, spell)
     return tpz.trust.canCast(caster, spell)
@@ -66,12 +72,12 @@ function onSpellCast(caster, target, spell)
 end
 
 function onMobSpawn(mob)
-    mob:addBehaviour(PARTY, HP_LTE, 25, MA, SELECT_HIGHEST, SPELLFAMILY_CURE)
+    mob:addBehaviour(PARTY, HPP_LTE, 25, MA, SELECT_HIGHEST, SPELLFAMILY_CURE)
 
     mob:addBehaviour(PARTY, STATUS, tpz.effect.SLEEP_I, MA, SPECIFIC, 1) -- Cure I
     mob:addBehaviour(PARTY, STATUS, tpz.effect.SLEEP_II, MA, SPECIFIC, 1) -- Cure I
 
-    mob:addBehaviour(PARTY, HP_LTE, 75, MA, SELECT_HIGHEST, SPELLFAMILY_CURE)
+    mob:addBehaviour(PARTY, HPP_LTE, 75, MA, SELECT_HIGHEST, SPELLFAMILY_CURE)
 
     mob:addBehaviour(PARTY, NOT_STATUS, tpz.effect.PROTECT, MA, SELECT_HIGHEST, SPELLFAMILY_PROTECTRA)
     mob:addBehaviour(PARTY, NOT_STATUS, tpz.effect.SHELL, MA, SELECT_HIGHEST, SPELLFAMILY_SHELLRA)

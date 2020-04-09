@@ -40,10 +40,6 @@ public:
     bool Ability(uint16 targid, uint16 abilityid) override;
     bool Cast(uint16 targid, SpellID spellid) override;
 
-    bool TryAbility();
-    bool TryCastSpell();
-    bool TryWS();
-
     static constexpr float RoamDistance{ 2.0f };
     static constexpr float SpawnDistance{ 3.0f };
     static constexpr float WarpDistance{ 30.0f };
@@ -60,7 +56,6 @@ private:
     CBattleEntity* m_LastTopEnmity;
     time_point m_CombatEndTime;
     time_point m_LastHealTickTime;
-    time_point m_LastRandomSpellTime;
 };
 
 #endif // _TRUSTCONTROLLER
