@@ -43,6 +43,25 @@ enum SPELLGROUP
     SPELLGROUP_TRUST     = 8
 };
 
+enum SPELLFAMILY
+{
+    SPELLFAMILY_NONE     = 0,
+    SPELLFAMILY_CURE     = 1,
+    SPELLFAMILY_CURAGA   = 2,
+    SPELLFAMILY_RAISE    = 3,
+    SPELLFAMILY_HOLY     = 4,
+    SPELLFAMILY_DIA      = 5,
+    SPELLFAMILY_BANISH   = 6,
+    SPELLFAMILY_DIAGA    = 7,
+    SPELLFAMILY_BANISHGA = 8,
+    SPELLFAMILY_PROTECT  = 9,
+    SPELLFAMILY_SHELL    = 10,
+    SPELLFAMILY_SLOW     = 11,
+    SPELLFAMILY_HASTE    = 12,
+    SPELLFAMILY_PARALYZE = 13,
+    SPELLFAMILY_CURA     = 14,
+};
+
 enum SPELLREQ
 {
     SPELLCASTTYPE_NORMAL    = 0x00,
@@ -769,6 +788,7 @@ public:
     uint16      getAnimationID();
     uint16      getAnimationTime();
     SPELLGROUP  getSpellGroup();
+    SPELLFAMILY getSpellFamily();
     uint8       getSkillType();
     uint16      getZoneMisc();
     uint8       getAOE();
@@ -806,6 +826,7 @@ public:
     void        setAnimationID(uint16 AnimationID);
     void        setAnimationTime(uint16 AnimationTime);
     void        setSpellGroup(SPELLGROUP SpellGroup);
+    void        setSpellFamily(SPELLFAMILY SpellFamily);
     void        setSkillType(uint8 SkillType);
     void        setZoneMisc(uint16 Misc);
     void        setAOE(uint8 AOE);
@@ -845,6 +866,7 @@ private:
     uint8       m_job[MAX_JOBTYPE]{};                      // job
     uint8       m_ValidTarget {};                          // target pc/npc/both
     SPELLGROUP  m_spellGroup {SPELLGROUP_NONE};            // spellgroup
+    SPELLFAMILY m_spellFamily {SPELLFAMILY_NONE};          // spell family
     uint16      m_zoneMisc {};                             // spellcasting conditions
     uint8       m_AOE {};                                  // aoe or single target spell
     uint16      m_base {};                                 // spell base damage
