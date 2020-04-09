@@ -223,6 +223,36 @@ SPELLFAMILY CSpell::getSpellFamily()
     {
         return SPELLFAMILY_DISPEL;
     }
+
+    if (checkList({ 144, 145, 146, 147, 148 }))
+    {
+        return SPELLFAMILY_FIRE;
+    }
+
+    if (checkList({ 149, 150, 151, 152, 153 }))
+    {
+        return SPELLFAMILY_BLIZZARD;
+    }
+
+    if (checkList({ 154, 155, 156, 157, 158 }))
+    {
+        return SPELLFAMILY_AERO;
+    }
+
+    if (checkList({ 159, 160, 161, 162, 163 }))
+    {
+        return SPELLFAMILY_STONE;
+    }
+
+    if (checkList({ 164, 165, 166, 167, 168 }))
+    {
+        return SPELLFAMILY_THUNDER;
+    }
+
+    if (checkList({ 169, 170, 171, 172, 173 }))
+    {
+        return SPELLFAMILY_WATER;
+    }
     
     return m_spellFamily;
 }

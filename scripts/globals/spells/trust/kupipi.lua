@@ -1,10 +1,60 @@
 -----------------------------------------
 -- Trust: Kupipi
 -----------------------------------------
+require("scripts/globals/status")
 require("scripts/globals/trust")
 require("scripts/globals/utils")
 require("scripts/globals/zone")
 -----------------------------------------
+
+-- TODO
+
+-- SELECTORS
+SELF = 0
+PARTY = 1
+TARGET = 2
+
+-- TRIGGERS
+HPP_LTE = 0
+HPP_GTE = 1
+MPP_LTE = 2
+TP_GTE = 3
+STATUS = 4
+NOT_STATUS = 5
+STATUS_FLAG = 6
+NUKE = 7
+CAN_SC = 8
+CAN_MB = 9
+
+-- REACTION
+ATTACK = 0
+ASSIST = 1
+MA = 2
+JA = 3
+WS = 4
+
+-- REACTION MODIFIERS
+SELECT_HIGHEST = 0
+SELECT_LOWEST = 1
+SPECIFIC = 2
+
+-- REACTION ARGS
+-- Families, spellIDs etc.
+SPELLFAMILY_NONE = 0
+SPELLFAMILY_CURE = 1
+SPELLFAMILY_PROTECTRA = 2
+SPELLFAMILY_SHELLRA = 3
+SPELLFAMILY_SLOW = 4
+SPELLFAMILY_PARALYZE = 5
+SPELLFAMILY_ERASE = 6
+SPELLFAMILY_FLASH = 7
+SPELLFAMILY_DISPEL = 8
+SPELLFAMILY_AERO = 9
+SPELLFAMILY_BLIZZARD = 10
+SPELLFAMILY_FIRE = 11
+SPELLFAMILY_STONE = 12
+SPELLFAMILY_THUNDER = 13
+SPELLFAMILY_WATER = 14
 
 function onMagicCastingCheck(caster, target, spell)
     return tpz.trust.canCast(caster, spell)
@@ -22,19 +72,23 @@ function onSpellCast(caster, target, spell)
 end
 
 function onMobSpawn(mob)
-    mob:addListener("COMBAT_TICK", "KUPIPI_COMBAT_TICK", function(trust, master, target)
-        function round(x)
-            return x >= 0 and math.floor(x + 0.5) or math.ceil(x - 0.5)
-        end
-        
-        local party = master:getPartyWithTrusts()
-        local lvl = trust:getMainLvl()
-        local maxCure = utils.clamp(round(lvl/8), 1, 6)
+    mob:addBehaviour(PARTY, HPP_LTE, 25, MA, SELECT_HIGHEST, SPELLFAMILY_CURE)
 
-        for _, member in ipairs(party) do
-            if member:getHPP() <= 75 then
-                trust:castSpell(maxCure, member)
-            end
-        end
-    end)
+    mob:addBehaviour(PARTY, STATUS, tpz.effect.SLEEP_I, MA, SPECIFIC, 1) -- Cure I
+    mob:addBehaviour(PARTY, STATUS, tpz.effect.SLEEP_II, MA, SPECIFIC, 1) -- Cure I
+
+    mob:addBehaviour(PARTY, HPP_LTE, 75, MA, SELECT_HIGHEST, SPELLFAMILY_CURE)
+
+    mob:addBehaviour(PARTY, NOT_STATUS, tpz.effect.PROTECT, MA, SELECT_HIGHEST, SPELLFAMILY_PROTECTRA)
+    mob:addBehaviour(PARTY, NOT_STATUS, tpz.effect.SHELL, MA, SELECT_HIGHEST, SPELLFAMILY_SHELLRA)
+
+    mob:addBehaviour(SELF, STATUS_FLAG, tpz.effectFlag.ERASABLE, MA, SELECT_HIGHEST, SPELLFAMILY_ERASE)
+    mob:addBehaviour(PARTY, STATUS_FLAG, tpz.effectFlag.ERASABLE, MA, SELECT_HIGHEST, SPELLFAMILY_ERASE)
+
+    mob:addBehaviour(TARGET, STATUS_FLAG, tpz.effectFlag.DISPELABLE, MA, SELECT_HIGHEST, SPELLFAMILY_DISPEL)
+
+    mob:addBehaviour(TARGET, NOT_STATUS, tpz.effect.PARALYSIS, MA, SELECT_HIGHEST, SPELLFAMILY_PARALYZE, 60)
+    mob:addBehaviour(TARGET, NOT_STATUS, tpz.effect.SLOW, MA, SELECT_HIGHEST, SPELLFAMILY_SLOW, 60)
+
+    mob:addBehaviour(TARGET, NOT_STATUS, tpz.effect.FLASH, MA, SELECT_HIGHEST, SPELLFAMILY_FLASH, 60)
 end

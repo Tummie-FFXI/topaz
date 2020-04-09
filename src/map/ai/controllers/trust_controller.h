@@ -26,6 +26,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/
 
 class CCharEntity;
 class CTrustEntity;
+class CBehaviourContainer;
 
 class CTrustController : public CMobController
 {
@@ -37,14 +38,13 @@ public:
     void Despawn() override;
 
     bool Ability(uint16 targid, uint16 abilityid) override;
-
-    bool TryAbility();
-    bool TryCastSpell();
-    bool TryWS();
+    bool Cast(uint16 targid, SpellID spellid) override;
 
     static constexpr float RoamDistance{ 2.0f };
     static constexpr float SpawnDistance{ 3.0f };
     static constexpr float WarpDistance{ 30.0f };
+
+    std::unique_ptr<CBehaviourContainer> m_BehaviourContainer;
 
 private:
     void DoCombatTick(time_point tick) override;
@@ -56,7 +56,6 @@ private:
     CBattleEntity* m_LastTopEnmity;
     time_point m_CombatEndTime;
     time_point m_LastHealTickTime;
-    time_point m_LastRandomSpellTime;
 };
 
 #endif // _TRUSTCONTROLLER

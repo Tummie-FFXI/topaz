@@ -25,6 +25,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/
 #include "../../status_effect_container.h"
 #include "../../enmity_container.h"
 #include "../../ai/states/despawn_state.h"
+#include "../../ai/helpers/behaviour_container.h"
 #include "../../entities/charentity.h"
 #include "../../entities/trustentity.h"
 #include "../../packets/char.h"
@@ -33,6 +34,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/
 
 CTrustController::CTrustController(CCharEntity* PChar, CTrustEntity* PTrust) : CMobController(PTrust)
 {
+    m_BehaviourContainer = std::make_unique<CBehaviourContainer>(PTrust);
 }
 
 CTrustController::~CTrustController()
@@ -132,27 +134,9 @@ void CTrustController::DoCombatTick(time_point tick)
             POwner->PAI->PathFind->FollowPath();
         }
 
-        auto currentTopEnmity = GetTopEnmity();
-        if (m_LastTopEnmity != currentTopEnmity)
-        {
-            POwner->PAI->EventHandler.triggerListener("ENMITY_CHANGED", POwner, PMaster, PTarget);
-            m_LastTopEnmity = currentTopEnmity;
-        }
+        m_BehaviourContainer->Tick(tick);
 
-        if (TryAbility())
-        {
-            return;
-        }
-        else if (TryCastSpell())
-        {
-            return;
-        }
-        else if (TryWS())
-        {
-            return;
-        }
-
-        POwner->PAI->EventHandler.triggerListener("COMBAT_TICK", POwner, PMaster, PTarget);
+        //POwner->PAI->EventHandler.triggerListener("COMBAT_TICK", POwner, PMaster, PTarget);
     }
 }
 
@@ -225,140 +209,14 @@ bool CTrustController::Ability(uint16 targid, uint16 abilityid)
     return false;
 }
 
-bool CTrustController::TryAbility()
+bool CTrustController::Cast(uint16 targid, SpellID spellid)
 {
-    return false;
-}
-
-bool CTrustController::TryCastSpell()
-{
-    auto PMaster = static_cast<CCharEntity*>(POwner->PMaster);
-    auto PParty = PMaster->PParty;
-    auto PTrusts = PMaster->PTrusts;
-    auto POwnerMob = static_cast<CMobEntity*>(POwner);
-    auto spellContainer = POwnerMob->SpellContainer;
-
-    // Check on Spell/Target/Party status
-
-    // TODO: Have the Lua dictate which of these spells the trusts cares about, so the container is left alone if there is no
-    // spellcasting.
-    // For example: trust:maintainBuff(EFFECT_SHELLRA)
-    auto bestCure = spellContainer->GetBestAvailable(SPELLFAMILY_CURE);
-    auto bestProtectra = spellContainer->GetBestAvailable(SPELLFAMILY_PROTECTRA);
-    auto bestShellra = spellContainer->GetBestAvailable(SPELLFAMILY_SHELLRA);
-    auto bestSlow = spellContainer->GetBestAvailable(SPELLFAMILY_SLOW);
-    auto bestParalyze = spellContainer->GetBestAvailable(SPELLFAMILY_PARALYZE);
-    auto bestFlash = spellContainer->GetBestAvailable(SPELLFAMILY_FLASH);
-    auto bestErase = spellContainer->GetBestAvailable(SPELLFAMILY_ERASE);
-    auto bestDispel = spellContainer->GetBestAvailable(SPELLFAMILY_DISPEL);
-
-    auto entirePartyHasEffect = [](CCharEntity* master, uint32 effect)
+    FaceTarget(targid);
+    if (static_cast<CMobEntity*>(POwner)->PRecastContainer->Has(RECAST_MAGIC, static_cast<uint16>(spellid)))
     {
-        bool someoneNeedsBuff = false;
-        master->ForPartyWithTrusts([&someoneNeedsBuff, effect](CBattleEntity* entity)
-        {
-            if (!entity->StatusEffectContainer->HasStatusEffect(static_cast<EFFECT>(effect)))
-            {
-                someoneNeedsBuff = true;
-                return;
-            }
-        });
-        return someoneNeedsBuff;
-    };
-
-    auto someoneNeedsProtect = entirePartyHasEffect(PMaster, EFFECT_PROTECT);
-    auto someoneNeedsShell = entirePartyHasEffect(PMaster, EFFECT_SHELL);
-
-    std::optional<CBattleEntity*> memberNeedsCure;
-    PMaster->ForPartyWithTrusts([&memberNeedsCure](CBattleEntity* member)
-    {
-        if (member->GetHPP() <= 75 || // TODO: Make percent configurable
-            member->StatusEffectContainer->HasStatusEffect({ EFFECT_SLEEP, EFFECT_SLEEP_II }))
-        {
-            memberNeedsCure = member;
-        }
-    });
-
-    auto targetHasEffect = [](CBattleEntity* target, uint32 effect)
-    {
-        if (target == nullptr) return false;
-        return target->StatusEffectContainer->HasStatusEffect(static_cast<EFFECT>(effect));
-    };
-
-    // Cast Spells TODO: Tailored for Kupipi at the moment
-
-    if (bestErase.has_value())
-    {
-        // Prioritize self
-        if (POwner->StatusEffectContainer->HasStatusEffectByFlag(EFFECTFLAG_ERASABLE))
-        {
-            return Cast(POwner->targid, bestErase.value());
-        }
-        PMaster->ForPartyWithTrusts([&](CBattleEntity* member)
-        {
-            if (member->StatusEffectContainer->HasStatusEffectByFlag(EFFECTFLAG_ERASABLE))
-            {
-                return Cast(member->targid, bestErase.value());
-            }
-            return false;
-        });
+        return false;
     }
-
-    if (memberNeedsCure.has_value() && bestCure.has_value())
-    {
-        return Cast(memberNeedsCure.value()->targid, bestCure.value());
-    }
-
-    if (someoneNeedsProtect && CanCastSpells() && bestProtectra.has_value())
-    {
-        return Cast(POwner->targid, bestProtectra.value());
-    }
-
-    if (someoneNeedsShell && CanCastSpells() && bestShellra.has_value())
-    {
-        return Cast(POwner->targid, bestShellra.value());
-    }
-
-    // NOTE: Extra recast is added to debuffs to make sure they aren't spammed as much if an enemy resists them or is immune
-
-    if (PTarget->StatusEffectContainer->HasStatusEffectByFlag(EFFECTFLAG_DISPELABLE) && bestDispel.has_value())
-    {
-        return Cast(PTarget->targid, bestDispel.value());
-    }
-
-    if (!(targetHasEffect(PTarget, EFFECT_SLOW) || targetHasEffect(PTarget, EFFECT_SLOW_II)) && bestSlow.has_value())
-    {
-        POwner->PRecastContainer->Add(RECAST_MAGIC, static_cast<uint16>(bestSlow.value()), 60000);
-        return Cast(PTarget->targid, bestSlow.value());
-    }
-
-    if (!(targetHasEffect(PTarget, EFFECT_PARALYSIS) || targetHasEffect(PTarget, EFFECT_PARALYSIS_II)) && bestParalyze.has_value())
-    {
-        POwner->PRecastContainer->Add(RECAST_MAGIC, static_cast<uint16>(bestParalyze.value()), 60000);
-        return Cast(PTarget->targid, bestParalyze.value());
-    }
-
-    if (!targetHasEffect(PTarget, EFFECT_FLASH) && bestFlash.has_value())
-    {
-        return Cast(PTarget->targid, bestFlash.value());
-    }
-
-    // Otherwise, cast something random every 30-60 seconds
-    auto chosenSpellId = spellContainer->GetSpell();
-    if (chosenSpellId.has_value() && m_Tick >= m_LastRandomSpellTime + std::chrono::seconds(tpzrand::GetRandomNumber(30, 60)))
-    {
-        m_LastRandomSpellTime = m_Tick;
-        POwner->PRecastContainer->Add(RECAST_MAGIC, static_cast<uint16>(chosenSpellId.value()), 60000);
-        CastSpell(chosenSpellId.value());
-        return true;
-    }
-
-    return false;
-}
-
-bool CTrustController::TryWS()
-{
-    return false;
+    return CController::Cast(targid, spellid);
 }
 
 CBattleEntity* CTrustController::GetTopEnmity()
