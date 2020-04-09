@@ -227,7 +227,6 @@ public:
 
 private:
     CTrustEntity* POwner;
-    uint16 m_secondsDelayBetweenActions;
     time_point m_lastAction;
     std::vector<Action_t> actions;
 };

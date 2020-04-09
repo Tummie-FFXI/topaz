@@ -12100,6 +12100,7 @@ inline int32 CLuaBaseEntity::addBehaviour(lua_State* L)
 
     auto trust = static_cast<CTrustEntity*>(m_PBaseEntity);
     auto controller = static_cast<CTrustController*>(trust->PAI->GetController());
+
     controller->m_BehaviourContainer->AddBehaviour(selector, trigger, trigger_condition, reaction, reaction_mod, reaction_arg, retry_delay);
 
     return 0;

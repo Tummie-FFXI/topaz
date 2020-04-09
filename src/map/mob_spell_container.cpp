@@ -114,7 +114,7 @@ std::optional<SpellID> CMobSpellContainer::GetBestAvailable(SPELLFAMILY family)
         for (auto id : list)
         {
             auto spell = spell::GetSpell(id);
-            bool sameFamily = spell->getSpellFamily() == family;
+            bool sameFamily = (family == SPELLFAMILY_NONE) ? true : spell->getSpellFamily() == family;
             bool hasEnougnMP = spell->getMPCost() <= m_PMob->health.mp;
             bool isNotInRecast = !m_PMob->PRecastContainer->Has(RECAST_MAGIC, static_cast<uint16>(id));
             if (sameFamily && hasEnougnMP && isNotInRecast)
@@ -131,6 +131,7 @@ std::optional<SpellID> CMobSpellContainer::GetBestAvailable(SPELLFAMILY family)
     searchInList(m_naList);
 
     // Assume the highest ID is the best (back of the vector)
+    // TODO: These will need to be organised by family, then merged
     return (!matches.empty()) ? std::optional<SpellID>{ matches.back() } : std::nullopt;
 }
 
