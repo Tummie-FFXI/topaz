@@ -25,6 +25,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/
 #include "../../status_effect_container.h"
 #include "../../enmity_container.h"
 #include "../../ai/states/despawn_state.h"
+#include "../../ai/helpers/behaviour_container.h"
 #include "../../entities/charentity.h"
 #include "../../entities/trustentity.h"
 #include "../../packets/char.h"
@@ -33,6 +34,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/
 
 CTrustController::CTrustController(CCharEntity* PChar, CTrustEntity* PTrust) : CMobController(PTrust)
 {
+    m_BehaviourContainer = std::make_unique<CBehaviourContainer>(PTrust);
 }
 
 CTrustController::~CTrustController()
@@ -132,6 +134,8 @@ void CTrustController::DoCombatTick(time_point tick)
             POwner->PAI->PathFind->FollowPath();
         }
 
+        /*
+        
         auto currentTopEnmity = GetTopEnmity();
         if (m_LastTopEnmity != currentTopEnmity)
         {
@@ -152,7 +156,11 @@ void CTrustController::DoCombatTick(time_point tick)
             return;
         }
 
-        POwner->PAI->EventHandler.triggerListener("COMBAT_TICK", POwner, PMaster, PTarget);
+        */
+
+        m_BehaviourContainer->Tick(tick);
+
+        //POwner->PAI->EventHandler.triggerListener("COMBAT_TICK", POwner, PMaster, PTarget);
     }
 }
 
@@ -223,6 +231,16 @@ bool CTrustController::Ability(uint16 targid, uint16 abilityid)
         return POwner->PAI->Internal_Ability(targid, abilityid);
     }
     return false;
+}
+
+bool CTrustController::Cast(uint16 targid, SpellID spellid)
+{
+    FaceTarget(targid);
+    if (static_cast<CMobEntity*>(POwner)->PRecastContainer->Has(RECAST_MAGIC, static_cast<uint16>(spellid)))
+    {
+        return false;
+    }
+    return CController::Cast(targid, spellid);
 }
 
 bool CTrustController::TryAbility()

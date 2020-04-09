@@ -73,6 +73,9 @@
 #include "../ai/states/weaponskill_state.h"
 
 #include "../ai/controllers/mob_controller.h"
+#include "../ai/controllers/trust_controller.h"
+
+#include "../ai/helpers/behaviour_container.h"
 
 #include "../entities/automatonentity.h"
 #include "../entities/charentity.h"
@@ -12064,6 +12067,45 @@ inline int32 CLuaBaseEntity::getTrustID(lua_State* L)
 }
 
 /************************************************************************
+*  Function: getTrustID()
+*  Purpose :
+*  Example : trust:getTrustID()
+*  Notes   :
+************************************************************************/
+
+inline int32 CLuaBaseEntity::addBehaviour(lua_State* L)
+{
+    TPZ_DEBUG_BREAK_IF(m_PBaseEntity == nullptr);
+    TPZ_DEBUG_BREAK_IF(m_PBaseEntity->objtype != TYPE_TRUST);
+
+    TPZ_DEBUG_BREAK_IF(lua_isnil(L, 1) || !lua_isnumber(L, 1));
+    TPZ_DEBUG_BREAK_IF(lua_isnil(L, 2) || !lua_isnumber(L, 2));
+    TPZ_DEBUG_BREAK_IF(lua_isnil(L, 3) || !lua_isnumber(L, 3));
+    TPZ_DEBUG_BREAK_IF(lua_isnil(L, 4) || !lua_isnumber(L, 4));
+    TPZ_DEBUG_BREAK_IF(lua_isnil(L, 5) || !lua_isnumber(L, 5));
+    TPZ_DEBUG_BREAK_IF(lua_isnil(L, 6) || !lua_isnumber(L, 6));
+    // 7 is optional
+
+    auto selector = (B_SELECTOR)lua_tointeger(L, 1);
+    auto trigger = (B_TRIGGER)lua_tointeger(L, 2);
+    auto trigger_condition = (uint16)lua_tointeger(L, 3);
+    auto reaction = (B_REACTION)lua_tointeger(L, 4);
+    auto reaction_mod = (B_REACTION_MODIFIER)lua_tointeger(L, 5);
+    auto reaction_arg = (uint16)lua_tointeger(L, 6);
+    auto retry_delay = 0;
+    if (!lua_isnil(L, 7) && lua_isnumber(L, 7))
+    {
+        retry_delay = (uint16)lua_tointeger(L, 7);
+    }
+
+    auto trust = static_cast<CTrustEntity*>(m_PBaseEntity);
+    auto controller = static_cast<CTrustController*>(trust->PAI->GetController());
+    controller->m_BehaviourContainer->AddBehaviour(selector, trigger, trigger_condition, reaction, reaction_mod, reaction_arg, retry_delay);
+
+    return 0;
+}
+
+/************************************************************************
 *  Function: despawnPet()
 *  Purpose : Despawns a Pet Entity
 *  Example : target:despawnPet()
@@ -14706,6 +14748,7 @@ Lunar<CLuaBaseEntity>::Register_t CLuaBaseEntity::methods[] =
     // Trust related
     LUNAR_DECLARE_METHOD(CLuaBaseEntity,spawnTrust),
     LUNAR_DECLARE_METHOD(CLuaBaseEntity,getTrustID),
+    LUNAR_DECLARE_METHOD(CLuaBaseEntity,addBehaviour),
 
     // Mob Entity-Specific
     LUNAR_DECLARE_METHOD(CLuaBaseEntity,setMobLevel),
