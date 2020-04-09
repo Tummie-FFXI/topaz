@@ -66,7 +66,13 @@ function onSpellCast(caster, target, spell)
 end
 
 function onMobSpawn(mob)
+    mob:addBehaviour(PARTY, HP_LTE, 25, MA, SELECT_HIGHEST, SPELLFAMILY_CURE)
+
+    mob:addBehaviour(PARTY, STATUS, tpz.effect.SLEEP_I, MA, SPECIFIC, 1) -- Cure I
+    mob:addBehaviour(PARTY, STATUS, tpz.effect.SLEEP_II, MA, SPECIFIC, 1) -- Cure I
+
     mob:addBehaviour(PARTY, HP_LTE, 75, MA, SELECT_HIGHEST, SPELLFAMILY_CURE)
+
     mob:addBehaviour(PARTY, NOT_STATUS, tpz.effect.PROTECT, MA, SELECT_HIGHEST, SPELLFAMILY_PROTECTRA)
     mob:addBehaviour(PARTY, NOT_STATUS, tpz.effect.SHELL, MA, SELECT_HIGHEST, SPELLFAMILY_SHELLRA)
 
@@ -74,6 +80,7 @@ function onMobSpawn(mob)
     mob:addBehaviour(PARTY, STATUS_FLAG, tpz.effectFlag.ERASABLE, MA, SELECT_HIGHEST, SPELLFAMILY_ERASE)
 
     mob:addBehaviour(TARGET, STATUS_FLAG, tpz.effectFlag.DISPELABLE, MA, SELECT_HIGHEST, SPELLFAMILY_DISPEL)
+
     mob:addBehaviour(TARGET, NOT_STATUS, tpz.effect.PARALYSIS, MA, SELECT_HIGHEST, SPELLFAMILY_PARALYZE, 60)
     mob:addBehaviour(TARGET, NOT_STATUS, tpz.effect.SLOW, MA, SELECT_HIGHEST, SPELLFAMILY_SLOW, 60)
 
