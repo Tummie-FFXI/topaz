@@ -17,13 +17,16 @@ enum B_SELECTOR
 
 enum B_TRIGGER
 {
-    HP_LTE = 0,
-    HP_GTE = 1,
-    MP_LTE = 2,
+    HPP_LTE = 0,
+    HPP_GTE = 1,
+    MPP_LTE = 2,
     TP_GTE = 3,
     STATUS = 4,
     NOT_STATUS = 5,
     STATUS_FLAG = 6,
+    NUKE = 7,
+    CAN_SC = 8,
+    CAN_MB = 9,
 };
 
 enum B_REACTION
@@ -92,17 +95,17 @@ public:
             {
                 switch (trigger)
                 {
-                case HP_LTE:
+                case HPP_LTE:
                 {
                     return target->GetHPP() <= param;
                     break;
                 }
-                case HP_GTE:
+                case HPP_GTE:
                 {
                     return target->GetHPP() >= param;
                     break;
                 }
-                case MP_LTE:
+                case MPP_LTE:
                 {
                     return target->GetMPP() <= param;
                     break;
@@ -125,6 +128,22 @@ public:
                 case STATUS_FLAG:
                 {
                     return target->StatusEffectContainer->HasStatusEffectByFlag(static_cast<EFFECTFLAG>(param));
+                    break;
+                }
+                case NUKE:
+                {
+                    return true;
+                    break;
+                }
+                case CAN_SC:
+                {
+                    auto PSCEffect = target->StatusEffectContainer->GetStatusEffect(EFFECT_SKILLCHAIN);
+                    return PSCEffect && PSCEffect->GetStartTime() + 3s < server_clock::now();
+                    break;
+                }
+                case CAN_MB:
+                {
+                    return false;
                     break;
                 }
                 default: { return false;  break; }
