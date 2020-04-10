@@ -909,25 +909,6 @@ enum class SpellID : uint16
 
 #define MAX_SPELL_ID 1024U
 
-enum SPELLFAMILY
-{
-    SPELLFAMILY_NONE = 0,
-    SPELLFAMILY_CURE = 1,
-    SPELLFAMILY_PROTECTRA = 2,
-    SPELLFAMILY_SHELLRA = 3,
-    SPELLFAMILY_SLOW = 4,
-    SPELLFAMILY_PARALYZE = 5,
-    SPELLFAMILY_ERASE = 6,
-    SPELLFAMILY_FLASH = 7,
-    SPELLFAMILY_DISPEL = 8,
-    SPELLFAMILY_AERO = 9,
-    SPELLFAMILY_BLIZZARD = 10,
-    SPELLFAMILY_FIRE = 11,
-    SPELLFAMILY_STONE = 12,
-    SPELLFAMILY_THUNDER = 13,
-    SPELLFAMILY_WATER = 14,
-};
-
 class CSpell
 {
 public:
@@ -976,7 +957,6 @@ public:
     bool        isDebuff(); // is a debuff spell
     bool        isNa(); // is a -na spell
     bool        canHitShadow(); // check if spell ignores shadows
-    SPELLFAMILY getSpellFamily();
 
     void        setRadius(float radius);
     void        setTotalTargets(uint16 total);
@@ -1045,7 +1025,6 @@ private:
     uint16      m_meritId {};                              // associated merit (if applicable)
     uint8       m_flag {};
     int8*       m_contentTag {};
-    SPELLFAMILY m_spellFamily { SPELLFAMILY_NONE };
 };
 
 //Namespace to work with spells
