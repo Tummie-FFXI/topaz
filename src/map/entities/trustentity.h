@@ -25,7 +25,6 @@
 #include "mobentity.h"
 
 class CCharEntity;
-class CBehaviourContainer;
 
 class CTrustEntity : public CMobEntity
 {

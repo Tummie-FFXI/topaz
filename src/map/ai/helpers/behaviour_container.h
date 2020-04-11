@@ -25,8 +25,8 @@ enum B_TRIGGER
     NOT_STATUS = 5,
     STATUS_FLAG = 6,
     NUKE = 7,
-    CAN_SC = 8,
-    CAN_MB = 9,
+    SC_AVAILABLE = 8,
+    MB_AVAILABLE = 9,
 };
 
 enum B_REACTION
@@ -42,7 +42,8 @@ enum B_REACTION_MODIFIER
 {
     SELECT_HIGHEST = 0,
     SELECT_LOWEST = 1,
-    SPECIFIC = 2,
+    SELECT_SPECIFIC = 2,
+    SELECT_RANDOM = 3,
 };
 
 struct Action_t
@@ -135,15 +136,16 @@ public:
                     return true;
                     break;
                 }
-                case CAN_SC:
+                case SC_AVAILABLE:
                 {
                     auto PSCEffect = target->StatusEffectContainer->GetStatusEffect(EFFECT_SKILLCHAIN);
-                    return PSCEffect && PSCEffect->GetStartTime() + 3s < server_clock::now();
+                    return PSCEffect && PSCEffect->GetStartTime() + 3s < server_clock::now() && PSCEffect->GetTier == 0;
                     break;
                 }
-                case CAN_MB:
+                case MB_AVAILABLE:
                 {
-                    return false;
+                    auto PSCEffect = target->StatusEffectContainer->GetStatusEffect(EFFECT_SKILLCHAIN);
+                    return PSCEffect && PSCEffect->GetStartTime() + 3s < server_clock::now() && PSCEffect->GetTier > 0;
                     break;
                 }
                 default: { return false;  break; }
@@ -191,7 +193,7 @@ public:
             {
                 if (action.reaction == MA)
                 {
-                    if (action.reaction_mod == SPECIFIC)
+                    if (action.reaction_mod == SELECT_SPECIFIC)
                     {
                         controller->Cast(target->targid, static_cast<SpellID>(action.reaction_arg));
                     }
@@ -212,6 +214,14 @@ public:
                             controller->Cast(target->targid, static_cast<SpellID>(spell.value()));
                         }
                         */
+                    }
+                    else if (action.reaction_mod == SELECT_RANDOM)
+                    {
+                        auto spell = POwner->SpellContainer->GetSpell();
+                        if (spell.has_value())
+                        {
+                            controller->Cast(target->targid, static_cast<SpellID>(spell.value()));
+                        }
                     }
                 }
 
