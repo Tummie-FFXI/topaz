@@ -4,9 +4,12 @@
 #include "../../../common/cbasetypes.h"
 #include "../../entities/charentity.h"
 #include "../../entities/trustentity.h"
+#include "../ai_container.h"
+#include "../controllers/trust_controller.h"
 #include "../../mob_spell_container.h"
+#include "../../status_effect.h"
+#include "../../status_effect_container.h"
 
-//class CTrustController;
 
 enum B_SELECTOR
 {
@@ -68,10 +71,7 @@ public:
 
     ~CBehaviourContainer() = default;
 
-    void AddBehaviour(B_SELECTOR selector, B_TRIGGER trigger, uint16 trigger_condition, B_REACTION reaction, B_REACTION_MODIFIER reaction_mod, uint16 reaction_arg, uint16 retry_delay)
-    {
-        actions.push_back(Action_t{ selector, trigger, trigger_condition, reaction, reaction_mod, reaction_arg, retry_delay });
-    }
+    void AddBehaviour(B_SELECTOR selector, B_TRIGGER trigger, uint16 trigger_condition, B_REACTION reaction, B_REACTION_MODIFIER reaction_mod, uint16 reaction_arg, uint16 retry_delay);
 
     void Tick(time_point tick)
     {
@@ -139,13 +139,13 @@ public:
                 case SC_AVAILABLE:
                 {
                     auto PSCEffect = target->StatusEffectContainer->GetStatusEffect(EFFECT_SKILLCHAIN);
-                    return PSCEffect && PSCEffect->GetStartTime() + 3s < server_clock::now() && PSCEffect->GetTier == 0;
+                    return PSCEffect && PSCEffect->GetStartTime() + 3s < server_clock::now() && PSCEffect->GetTier() == 0;
                     break;
                 }
                 case MB_AVAILABLE:
                 {
                     auto PSCEffect = target->StatusEffectContainer->GetStatusEffect(EFFECT_SKILLCHAIN);
-                    return PSCEffect && PSCEffect->GetStartTime() + 3s < server_clock::now() && PSCEffect->GetTier > 0;
+                    return PSCEffect && PSCEffect->GetStartTime() + 3s < server_clock::now() && PSCEffect->GetTier() > 0;
                     break;
                 }
                 default: { return false;  break; }
@@ -241,4 +241,4 @@ private:
     std::vector<Action_t> actions;
 };
 
-#endif
+#endif // _CBEHAVIOURCONTAINER_H
