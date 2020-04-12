@@ -1102,7 +1102,6 @@ void CBattleEntity::applyPetModifiers(CPetEntity* PPet)
     }
 }
 
-
 void CBattleEntity::removePetModifiers(CPetEntity* PPet)
 {
     for (auto modtype : m_petMod)
@@ -1151,7 +1150,7 @@ bool CBattleEntity::ValidTarget(CBattleEntity* PInitiator, uint16 targetFlags)
     {
         if (!isDead())
         {
-            if (allegiance == (PInitiator->allegiance % 2 == 0 ? PInitiator->allegiance + 1 : PInitiator->allegiance - 1))
+            if (allegiance != PInitiator->allegiance)
             {
                 return true;
             }

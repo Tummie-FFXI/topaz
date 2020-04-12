@@ -584,12 +584,19 @@ bool CCharEntity::ValidTarget(CBattleEntity* PInitiator, uint16 targetFlags)
     {
         return false;
     }
+
     if (isDead())
     {
         return (targetFlags & TARGET_PLAYER_DEAD) != 0;
     }
 
     if ((targetFlags & TARGET_PLAYER) && allegiance == PInitiator->allegiance)
+    {
+        return true;
+    }
+
+    // TODO: Restrict to nations only
+    if (allegiance != PInitiator->allegiance)
     {
         return true;
     }
@@ -1653,9 +1660,13 @@ CBattleEntity* CCharEntity::IsValidTarget(uint16 targid, uint16 validTargetFlags
 void CCharEntity::Die()
 {
     if (PLastAttacker)
+    {
         loc.zone->PushPacket(this, CHAR_INRANGE_SELF, new CMessageBasicPacket(PLastAttacker, this, 0, 0, MSGBASIC_PLAYER_DEFEATED_BY));
+    }     
     else
+    {
         loc.zone->PushPacket(this, CHAR_INRANGE_SELF, new CMessageBasicPacket(this, this, 0, 0, MSGBASIC_FALLS_TO_GROUND));
+    } 
 
     Die(death_duration);
     SetDeathTimestamp((uint32)time(nullptr));

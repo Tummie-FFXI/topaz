@@ -4865,6 +4865,12 @@ inline int32 CLuaBaseEntity::setAllegiance(lua_State* L)
     ALLEGIANCETYPE allegiance = (ALLEGIANCETYPE)lua_tointeger(L, 1);
 
     m_PBaseEntity->allegiance = allegiance;
+
+    if (auto PChar = static_cast<CCharEntity*>(m_PBaseEntity))
+    {
+        PChar->pushPacket(new CCharUpdatePacket(PChar));
+    }
+
     return 0;
 }
 

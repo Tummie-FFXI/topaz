@@ -347,7 +347,7 @@ bool CTargetFind::validEntity(CBattleEntity* PTarget)
 
 	if (m_PTarget->allegiance != PTarget->allegiance)
 	{
-		return false;
+		return true;
 	}
 
     // shouldn't add if target is charmed by the enemy
