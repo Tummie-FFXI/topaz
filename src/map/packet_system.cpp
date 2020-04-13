@@ -676,7 +676,7 @@ void SmallPacket0x01A(map_session_data_t* session, CCharEntity* PChar, CBasicPac
     break;
     case 0x05: // call for help
     {
-        if(PChar->StatusEffectContainer->HasPreventActionEffect())
+        if (PChar->StatusEffectContainer->HasPreventActionEffect())
             return;
 
         if (auto PMob = dynamic_cast<CMobEntity*>(PChar->GetBattleTarget()))
@@ -730,7 +730,7 @@ void SmallPacket0x01A(map_session_data_t* session, CCharEntity* PChar, CBasicPac
     break;
     case 0x0E: // Fishing
     {
-        if(PChar->StatusEffectContainer->HasPreventActionEffect())
+        if (PChar->StatusEffectContainer->HasPreventActionEffect())
             return;
 
         fishingutils::StartFishing(PChar);
@@ -772,7 +772,8 @@ void SmallPacket0x01A(map_session_data_t* session, CCharEntity* PChar, CBasicPac
                 PChar->pushPacket(new CMessageBasicPacket(PChar, PChar, 0, 0, MSGBASIC_WAIT_LONGER));
             }
         }
-        else{
+        else
+        {
             // You don't have any gysahl greens
             PChar->pushPacket(new CMessageSystemPacket(4545, 0, 39));
         }
@@ -810,15 +811,41 @@ void SmallPacket0x01A(map_session_data_t* session, CCharEntity* PChar, CBasicPac
         {
             PChar->loc.zone->SpawnMoogle(PChar);
         }
-        else{
+        else {
             PChar->loc.zone->SpawnPCs(PChar);
             PChar->loc.zone->SpawnNPCs(PChar);
             PChar->loc.zone->SpawnMOBs(PChar);
         }
     }
     break;
-    case 0x15: break; // ballista - quarry
-    case 0x16: break; // ballista - sprint
+    case 0x15: // ballista - quarry 
+    {
+        ShowInfo(CL_WHITE"Ballista Quarry from: %s\n" CL_RESET, PChar->GetName());
+    }
+    break;
+    case 0x16: // ballista - sprint
+    {
+        ShowInfo(CL_WHITE"Ballista Sprint from: %s\n" CL_RESET, PChar->GetName());
+
+        // TODO: Check for Petra
+        bool hasPetra = false;
+        if (!hasPetra)
+        {
+            PChar->StatusEffectContainer->AddStatusEffect(new CStatusEffect(EFFECT_SPRINT, EFFECT_SPRINT, 100, 0, 5));
+        }
+        else
+        {
+            // TODO: You cannot do that at this time...
+        }
+    }
+    break;
+    case 0x17: // TODO: confirm: ballista - scout
+    {
+        ShowInfo(CL_WHITE"Ballista Scout from: %s\n" CL_RESET, PChar->GetName());
+        // ballistautil::nearestRook(PChar);
+        // message
+    }
+    break;
     case 0x18: // blockaid
     {
         if (!PChar->StatusEffectContainer->HasStatusEffect(EFFECT_ALLIED_TAGS))

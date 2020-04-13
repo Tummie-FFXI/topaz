@@ -306,6 +306,14 @@ CActionPacket::CActionPacket(action_t& action)
         ActionType = ACTION_MAGIC_START;
     }
     break;
+    case ACTION_QUARRY:
+    {
+    }
+    break;
+    case ACTION_SPRINT:
+    {
+    }
+    break;
     default:
     {
         break;

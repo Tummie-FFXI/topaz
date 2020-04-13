@@ -561,7 +561,10 @@ void CCharEntity::PostTick()
         }
         // Do not send an update packet when only the position has change
         if (updatemask ^ UPDATE_POS)
-        pushPacket(new CCharUpdatePacket(this));
+        {
+            pushPacket(new CCharUpdatePacket(this));
+        }
+        
         updatemask = 0;
     }
 }
@@ -595,8 +598,11 @@ bool CCharEntity::ValidTarget(CBattleEntity* PInitiator, uint16 targetFlags)
         return true;
     }
 
-    // TODO: Restrict to nations only
-    if (allegiance != PInitiator->allegiance)
+    if (allegiance >= ALLEGIANCETYPE::ALLEGIANCE_SAN_DORIA &&
+        allegiance <= ALLEGIANCETYPE::ALLEGIANCE_GRIFFONS &&
+        PInitiator->allegiance >= ALLEGIANCETYPE::ALLEGIANCE_SAN_DORIA &&
+        PInitiator->allegiance <= ALLEGIANCETYPE::ALLEGIANCE_GRIFFONS &&
+        allegiance != PInitiator->allegiance)
     {
         return true;
     }
@@ -1689,18 +1695,28 @@ void CCharEntity::Die(duration _duration)
     PAI->ClearStateStack();
     PAI->Internal_Die(_duration);
 
-    // reraise modifiers
+    // TODO: Does the old allegiance need to be stashed in case of re-raise?
+    allegiance = ALLEGIANCETYPE::ALLEGIANCE_PLAYER;
+
     if (this->getMod(Mod::RERAISE_I) > 0)
+    {
         m_hasRaise = 1;
+    }
 
     if (this->getMod(Mod::RERAISE_II) > 0)
+    {
         m_hasRaise = 2;
+    }
 
     if (this->getMod(Mod::RERAISE_III) > 0)
+    {
         m_hasRaise = 3;
-    // MIJIN_RERAISE checks
+    }
+        
     if (m_hasRaise == 0 && this->getMod(Mod::MIJIN_RERAISE) > 0)
+    {
         m_hasRaise = 1;
+    }  
 
     CBattleEntity::Die();
 }

@@ -4,22 +4,32 @@
 --
 -----------------------------------
 local ID = require("scripts/zones/Diorama_Abdhaljs-Ghelsba/IDs")
+require("scripts/globals/keyitems")
+require("scripts/globals/npc_util")
 -----------------------------------
 
 function onInitialize(zone)
-end;
+end
 
-function onZoneIn(player,prevZone)
-    local cs = -1;
+function onZoneIn(player, prevZone)
+    local cs = -1
 
-    return cs;
-end;
+    if not player:hasKeyItem(tpz.ki.MAP_OF_DIO_ABDHALJS_GHELSBA) then
+        npcUtil.giveKeyItem(player, tpz.ki.MAP_OF_DIO_ABDHALJS_GHELSBA)
+    end
 
-function onRegionEnter(player,region)
-end;
+    if (player:getXPos() == 0 and player:getYPos() == 0 and player:getZPos() == 0) then
+        player:setPos(-200, -10, 252, 131)
+    end
 
-function onEventUpdate(player,csid,option)
-end;
+    return cs
+end
 
-function onEventFinish(player,csid,option)
-end;
+function onRegionEnter(player, region)
+end
+
+function onEventUpdate(player, csid, option)
+end
+
+function onEventFinish(player, csid, option)
+end

@@ -1544,7 +1544,7 @@ inline int32 CLuaBaseEntity::isAlly(lua_State *L)
 {
     TPZ_DEBUG_BREAK_IF(m_PBaseEntity == nullptr);
 
-    lua_pushboolean(L, m_PBaseEntity->objtype == TYPE_MOB && m_PBaseEntity->allegiance == ALLEGIANCE_PLAYER);
+    lua_pushboolean(L, m_PBaseEntity->objtype == TYPE_MOB && m_PBaseEntity->allegiance == ALLEGIANCETYPE::ALLEGIANCE_PLAYER);
     return 1;
 }
 
@@ -4846,7 +4846,7 @@ inline int32 CLuaBaseEntity::getAllegiance(lua_State* L)
 {
     TPZ_DEBUG_BREAK_IF(m_PBaseEntity == nullptr);
 
-    lua_pushinteger(L, m_PBaseEntity->allegiance);
+    lua_pushinteger(L, static_cast<uint32>(m_PBaseEntity->allegiance));
 
     return 1;
 }
@@ -4862,14 +4862,11 @@ inline int32 CLuaBaseEntity::setAllegiance(lua_State* L)
     TPZ_DEBUG_BREAK_IF(m_PBaseEntity == nullptr);
     TPZ_DEBUG_BREAK_IF(lua_isnil(L, 1) || !lua_isnumber(L, 1));
 
-    ALLEGIANCETYPE allegiance = (ALLEGIANCETYPE)lua_tointeger(L, 1);
+    uint8 allegiance = lua_tointeger(L, 1);
 
     m_PBaseEntity->allegiance = allegiance;
 
-    if (auto PChar = static_cast<CCharEntity*>(m_PBaseEntity))
-    {
-        PChar->pushPacket(new CCharUpdatePacket(PChar));
-    }
+    m_PBaseEntity->updatemask |= UPDATE_STATUS;
 
     return 0;
 }

@@ -15,22 +15,30 @@ function error(player, msg)
 end
 
 function onTrigger(player, target, allegiance)
-    if target == nil then
-        error(player, "Set who's allegiance?")
+
+    -- validate target
+    local targ
+    if (target == nil) then
+        targ = player
+    else
+        targ = GetPlayerByName(target)
+        if (targ == nil) then
+            error(player, string.format( "Player named '%s' not found!", target ) )
+            return
+        end
+    end
+
+    if allegiance == nil or (allegiance < 0 or allegiance > 6) then
+        error(player, "Improper allegiance passed. Valid Values: 0 to 6")
         return
     end
 
-    local targ = GetPlayerByName(target)
+    local toString = {
+        "Mob", "Player",
+        "San d'Oria", "Bastok", "Windurst",
+        "Wyverns", "Griffons"
+    }
 
-    if targ == nil then
-        error(player, string.format("Cannot find player: %s.", target))
-        return
-    end
-
-    if allegiance == nil or ( allegiance < 0 or allegiance > 4 ) then
-        error(player, "Improper allegiance passed. Valid Values: 0 to 4")
-        return
-    end
-    player:PrintToPlayer(string.format("You set %s's allegiance to %d", target, allegiance))
+    player:PrintToPlayer(string.format("You set %s's allegiance to %s", target, toString[allegiance + 1]))
     targ:setAllegiance(allegiance)
 end

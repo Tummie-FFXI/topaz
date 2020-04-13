@@ -2155,14 +2155,19 @@ tpz.damageType =
 -- DROP_DESPOIL = 0x04
 
 ----------------------------------
--- Allegiance (not currently used in code base)
+-- Allegiance
 ----------------------------------
 
--- ALLEGIANCE_MOB       = 0
--- ALLEGIANCE_PLAYER    = 1
--- ALLEGIANCE_SAN_DORIA = 2
--- ALLEGIANCE_BASTOK    = 3
--- ALLEGIANCE_WINDURST  = 4
+tpz.allegiance =
+{
+    MOB       = 0,
+    PLAYER    = 1,
+    SAN_DORIA = 2,
+    BASTOK    = 3,
+    WINDURST  = 4,
+    WYVERNS   = 5,
+    GRIFFONS  = 6,
+}
 
 ------------------------------------
 -- MOBMODs
