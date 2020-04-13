@@ -23,21 +23,13 @@ function onTrade(player,npc,trade)
 end
 
 function onTrigger(player,npc)
-    local license = player:hasKeyItem(tpz.ki.BALLISTA_LICENSE)
-    local onList = false
+    local license = true -- player:hasKeyItem(tpz.ki.BALLISTA_LICENSE)
 
-    --[[
     if not license then
         player:startEvent(73)
-    elseif onList then
-        player:startEvent(71)
     else
-        player:startEvent(70)
+        player:startEvent(144, tpz.ballista.entryFee)
     end
-    player:addItem(5302)
-    ]]--
-
-    player:startEvent(144, tpz.ballista.entryFee)
 end
 
 function onEventUpdate(player, csid, option)
@@ -48,6 +40,5 @@ function onEventFinish(player, csid, option)
         player:confirmTrade()
         player:delGil(tpz.ballista.entryFee)
         player:setPos(-200, -10, 252, 131, 43)
-    elseif csid == 70 then
     end
 end

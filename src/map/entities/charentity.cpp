@@ -598,10 +598,10 @@ bool CCharEntity::ValidTarget(CBattleEntity* PInitiator, uint16 targetFlags)
         return true;
     }
 
-    if (allegiance >= ALLEGIANCETYPE::ALLEGIANCE_SAN_DORIA &&
-        allegiance <= ALLEGIANCETYPE::ALLEGIANCE_GRIFFONS &&
-        PInitiator->allegiance >= ALLEGIANCETYPE::ALLEGIANCE_SAN_DORIA &&
-        PInitiator->allegiance <= ALLEGIANCETYPE::ALLEGIANCE_GRIFFONS &&
+    if (allegiance >= ALLEGIANCE_SAN_DORIA &&
+        allegiance <= ALLEGIANCE_GRIFFONS &&
+        PInitiator->allegiance >= ALLEGIANCE_SAN_DORIA &&
+        PInitiator->allegiance <= ALLEGIANCE_GRIFFONS &&
         allegiance != PInitiator->allegiance)
     {
         return true;
@@ -1696,7 +1696,7 @@ void CCharEntity::Die(duration _duration)
     PAI->Internal_Die(_duration);
 
     // TODO: Does the old allegiance need to be stashed in case of re-raise?
-    allegiance = ALLEGIANCETYPE::ALLEGIANCE_PLAYER;
+    allegiance = ALLEGIANCE_PLAYER;
 
     if (this->getMod(Mod::RERAISE_I) > 0)
     {
