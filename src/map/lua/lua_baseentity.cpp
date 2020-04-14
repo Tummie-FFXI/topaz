@@ -4862,7 +4862,7 @@ inline int32 CLuaBaseEntity::setAllegiance(lua_State* L)
     TPZ_DEBUG_BREAK_IF(m_PBaseEntity == nullptr);
     TPZ_DEBUG_BREAK_IF(lua_isnil(L, 1) || !lua_isnumber(L, 1));
 
-    auto allegiance = lua_tointeger(L, 1);
+    ALLEGIANCETYPE allegiance = (ALLEGIANCETYPE)lua_tointeger(L, 1);
 
     m_PBaseEntity->allegiance = allegiance;
 
