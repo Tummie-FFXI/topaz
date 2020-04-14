@@ -22,10 +22,13 @@ along with this program.  If not, see http://www.gnu.org/licenses/
 #ifndef _TRUSTCONTROLLER_H
 #define _TRUSTCONTROLLER_H
 
+#include <memory>
+
 #include "mob_controller.h"
 
 class CCharEntity;
 class CTrustEntity;
+
 class CBehaviourContainer;
 
 class CTrustController : public CMobController

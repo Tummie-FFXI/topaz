@@ -102,8 +102,11 @@ void CMobSpellContainer::RemoveSpell(SpellID spellId)
     findAndRemove(m_gaList, spellId);
     findAndRemove(m_damageList, spellId);
     findAndRemove(m_buffList, spellId);
+    findAndRemove(m_debuffList, spellId);
     findAndRemove(m_healList, spellId);
     findAndRemove(m_naList, spellId);
+
+    m_hasSpells = !(m_gaList.empty() && m_damageList.empty() && m_buffList.empty() && m_debuffList.empty() && m_healList.empty() && m_naList.empty());
 }
 
 std::optional<SpellID> CMobSpellContainer::GetBestAvailable(SPELLFAMILY family)

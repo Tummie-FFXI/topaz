@@ -113,27 +113,27 @@ CEntityUpdatePacket::CEntityUpdatePacket(CBaseEntity* PEntity, ENTITYUPDATE type
         case TYPE_TRUST:
         {
             CMobEntity* PMob = (CMobEntity*)PEntity;
+
+            if (updatemask & UPDATE_HP)
             {
-                if (updatemask & UPDATE_HP)
-                {
-                    ref<uint8>(0x1E) = PMob->GetHPP();
-                    ref<uint8>(0x1F) = PEntity->animation;
-                    ref<uint8>(0x2A) |= PEntity->animationsub;
-                    ref<uint32>(0x21) = PMob->m_flags;
-                    ref<uint8>(0x25) = PMob->health.hp > 0 ? 0x08 : 0;
-                    ref<uint8>(0x27) = PMob->m_name_prefix;
-                    if (PMob->PMaster != nullptr && PMob->PMaster->objtype == TYPE_PC)
-                        ref<uint8>(0x27) |= 0x08;
-                    ref<uint8>(0x28) |= (PMob->StatusEffectContainer->HasStatusEffect(EFFECT_TERROR) ? 0x10 : 0x00);
-                    ref<uint8>(0x28) |= PMob->health.hp > 0 && PMob->animation == ANIMATION_DEATH ? 0x08 : 0;
-                    ref<uint8>(0x29) = PEntity->allegiance;
-                    ref<uint8>(0x2B) = PEntity->namevis;
-                }
-                if (updatemask & UPDATE_STATUS)
-                {
-                    ref<uint32>(0x2C) = PMob->m_OwnerID.id;
-                }
+                ref<uint8>(0x1E) = PMob->GetHPP();
+                ref<uint8>(0x1F) = PEntity->animation;
+                ref<uint8>(0x2A) |= PEntity->animationsub;
+                ref<uint32>(0x21) = PMob->m_flags;
+                ref<uint8>(0x25) = PMob->health.hp > 0 ? 0x08 : 0;
+                ref<uint8>(0x27) = PMob->m_name_prefix;
+                if (PMob->PMaster != nullptr && PMob->PMaster->objtype == TYPE_PC)
+                    ref<uint8>(0x27) |= 0x08;
+                ref<uint8>(0x28) |= (PMob->StatusEffectContainer->HasStatusEffect(EFFECT_TERROR) ? 0x10 : 0x00);
+                ref<uint8>(0x28) |= PMob->health.hp > 0 && PMob->animation == ANIMATION_DEATH ? 0x08 : 0;
+                ref<uint8>(0x29) = PEntity->allegiance;
+                ref<uint8>(0x2B) = PEntity->namevis;
             }
+            if (updatemask & UPDATE_STATUS)
+            {
+                ref<uint32>(0x2C) = PMob->m_OwnerID.id;
+            }
+
             if (updatemask & UPDATE_NAME)
             {
                 //depending on size of name, this can be 0x20, 0x22, or 0x24
@@ -151,14 +151,8 @@ CEntityUpdatePacket::CEntityUpdatePacket(CBaseEntity* PEntity, ENTITYUPDATE type
         }
     }
 
-    // TODO: Read from the trust model itself
     if (PEntity->objtype == TYPE_TRUST)
     {
-        //ref<uint32>(0x21) = 0x21b;
-        //ref<uint8>(0x2B) = 0x06;
-        //ref<uint8>(0x2A) = 0x08;
-        //ref<uint8>(0x25) = 0x0f;
-        //ref<uint8>(0x27) = 0x28;
         ref<uint8>(0x28) = 0x45;
     }
 

@@ -498,7 +498,11 @@
     <ClCompile Include="..\..\src\map\ai\controllers\player_controller.cpp" />
     <ClCompile Include="..\..\src\map\ai\controllers\trust_controller.cpp" />
     <ClCompile Include="..\..\src\map\ai\helpers\action_queue.cpp" />
+<<<<<<< HEAD
     <ClInclude Include="..\..\src\map\ai\helpers\behaviour_container.cpp" />
+=======
+    <ClCompile Include="..\..\src\map\ai\helpers\behaviour_container.cpp" />
+>>>>>>> trust_spells
     <ClCompile Include="..\..\src\map\ai\helpers\event_handler.cpp" />
     <ClCompile Include="..\..\src\map\ai\helpers\pathfind.cpp" />
     <ClCompile Include="..\..\src\map\ai\helpers\targetfind.cpp" />

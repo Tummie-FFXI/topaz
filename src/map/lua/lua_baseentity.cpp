@@ -11747,7 +11747,7 @@ int32 CLuaBaseEntity::removeAmmo(lua_State* L)
 inline int32 CLuaBaseEntity::getWeaponSkillLevel(lua_State *L)
 {
     TPZ_DEBUG_BREAK_IF(m_PBaseEntity == nullptr);
-    TPZ_DEBUG_BREAK_IF(m_PBaseEntity->objtype != TYPE_PC && m_PBaseEntity->objtype != TYPE_PET && m_PBaseEntity->objtype != TYPE_MOB && m_PBaseEntity->objtype != TYPE_TRUST);
+    TPZ_DEBUG_BREAK_IF(m_PBaseEntity->objtype == TYPE_NPC);
 
     TPZ_DEBUG_BREAK_IF(lua_isnil(L, 1) || !lua_isnumber(L, 1));
 
@@ -12086,12 +12086,12 @@ inline int32 CLuaBaseEntity::addBehaviour(lua_State* L)
     TPZ_DEBUG_BREAK_IF(lua_isnil(L, 6) || !lua_isnumber(L, 6));
     // 7 is optional
 
-    auto selector = (B_SELECTOR)lua_tointeger(L, 1);
-    auto trigger = (B_TRIGGER)lua_tointeger(L, 2);
-    auto trigger_condition = (uint16)lua_tointeger(L, 3);
-    auto reaction = (B_REACTION)lua_tointeger(L, 4);
-    auto reaction_mod = (B_REACTION_MODIFIER)lua_tointeger(L, 5);
-    auto reaction_arg = (uint16)lua_tointeger(L, 6);
+    auto selector = static_cast<B_SELECTOR>(lua_tointeger(L, 1));
+    auto trigger = static_cast<B_TRIGGER>(lua_tointeger(L, 2));
+    auto trigger_condition = static_cast<uint16>(lua_tointeger(L, 3));
+    auto reaction = static_cast<B_REACTION>(lua_tointeger(L, 4));
+    auto reaction_mod = static_cast<B_REACTION_MODIFIER>(lua_tointeger(L, 5));
+    auto reaction_arg = static_cast<uint16>(lua_tointeger(L, 6));
     auto retry_delay = 0;
     if (!lua_isnil(L, 7) && lua_isnumber(L, 7))
     {
