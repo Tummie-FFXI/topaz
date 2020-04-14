@@ -85,16 +85,16 @@ void CBehaviourContainer::Tick(time_point tick)
         };
 
         CBattleEntity* target = nullptr;
-        if (action.selector == SELF)
+        if (action.selector == B_SELECTOR::SELF)
         {
             target = checkTrigger(POwner, action.trigger, action.trigger_condition) ? POwner : nullptr;
         }
-        else if (action.selector == TARGET)
+        else if (action.selector == B_SELECTOR::TARGET)
         {
             auto mob = POwner->GetBattleTarget();
             target = checkTrigger(mob, action.trigger, action.trigger_condition) ? mob : nullptr;
         }
-        else if (action.selector == PARTY)
+        else if (action.selector == B_SELECTOR::PARTY)
         {
             // TODO: This is very messy
             CCharEntity* master = static_cast<CCharEntity*>(POwner->PMaster);
@@ -123,13 +123,13 @@ void CBehaviourContainer::Tick(time_point tick)
 
         if (target)
         {
-            if (action.reaction == MA)
+            if (action.reaction == B_REACTION::MA)
             {
-                if (action.reaction_mod == SELECT_SPECIFIC)
+                if (action.reaction_mod == B_REACTION_MODIFIER::SELECT_SPECIFIC)
                 {
                     controller->Cast(target->targid, static_cast<SpellID>(action.reaction_arg));
                 }
-                else if (action.reaction_mod == SELECT_HIGHEST)
+                else if (action.reaction_mod == B_REACTION_MODIFIER::SELECT_HIGHEST)
                 {
                     auto spell = POwner->SpellContainer->GetBestAvailable(static_cast<SPELLFAMILY>(action.reaction_arg));
                     if (spell.has_value())
@@ -137,7 +137,7 @@ void CBehaviourContainer::Tick(time_point tick)
                         controller->Cast(target->targid, static_cast<SpellID>(spell.value()));
                     }
                 }
-                else if (action.reaction_mod == SELECT_LOWEST)
+                else if (action.reaction_mod == B_REACTION_MODIFIER::SELECT_LOWEST)
                 {
                     /*
                     auto spell = POwner->SpellContainer->GetWorstAvailable(static_cast<SPELLFAMILY>(action.reaction_arg));
@@ -147,7 +147,7 @@ void CBehaviourContainer::Tick(time_point tick)
                     }
                     */
                 }
-                else if (action.reaction_mod == SELECT_RANDOM)
+                else if (action.reaction_mod == B_REACTION_MODIFIER::SELECT_RANDOM)
                 {
                     auto spell = POwner->SpellContainer->GetSpell();
                     if (spell.has_value())
