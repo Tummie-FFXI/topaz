@@ -135,8 +135,6 @@ void CTrustController::DoCombatTick(time_point tick)
         }
 
         m_BehaviourContainer->Tick(tick);
-
-        //POwner->PAI->EventHandler.triggerListener("COMBAT_TICK", POwner, PMaster, PTarget);
     }
 }
 

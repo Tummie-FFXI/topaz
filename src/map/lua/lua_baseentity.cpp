@@ -12067,10 +12067,10 @@ inline int32 CLuaBaseEntity::getTrustID(lua_State* L)
 }
 
 /************************************************************************
-*  Function: getTrustID()
+*  Function: addBehaviour()
 *  Purpose :
-*  Example : trust:getTrustID()
-*  Notes   :
+*  Example : mob:addBehaviour(PARTY, HPP_LTE, 25, MA, SELECT_HIGHEST, tpz.magic.spellFamily.CURE)
+*  Notes   : Adds a behaviour to the gambit system
 ************************************************************************/
 
 inline int32 CLuaBaseEntity::addBehaviour(lua_State* L)
