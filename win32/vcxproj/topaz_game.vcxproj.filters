@@ -821,6 +821,9 @@
     <ClInclude Include="..\..\src\map\ai\helpers\action_queue.h">
       <Filter>Header Files\ai\helpers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\map\ai\helpers\behaviour_container.h">
+      <Filter>Header Files\ai\helpers</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\map\ai\states\trigger_state.h">
       <Filter>Header Files\ai\states</Filter>
     </ClInclude>
@@ -1565,6 +1568,9 @@
       <Filter>Source Files\ai\helpers</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\map\ai\helpers\action_queue.cpp">
+      <Filter>Source Files\ai\helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\map\ai\helpers\behaviour_container.cpp">
       <Filter>Source Files\ai\helpers</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\map\ai\states\trigger_state.cpp">

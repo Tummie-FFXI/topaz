@@ -25,12 +25,16 @@ along with this program.  If not, see http://www.gnu.org/licenses/
 #include "../../status_effect_container.h"
 #include "../../enmity_container.h"
 #include "../../ai/states/despawn_state.h"
+#include "../../ai/helpers/behaviour_container.h"
 #include "../../entities/charentity.h"
 #include "../../entities/trustentity.h"
 #include "../../packets/char.h"
+#include "../../recast_container.h"
+#include "../../mob_spell_container.h"
 
 CTrustController::CTrustController(CCharEntity* PChar, CTrustEntity* PTrust) : CMobController(PTrust)
 {
+    m_BehaviourContainer = std::make_unique<CBehaviourContainer>(PTrust);
 }
 
 CTrustController::~CTrustController()
@@ -86,6 +90,7 @@ void CTrustController::DoCombatTick(time_point tick)
         m_LastTopEnmity = nullptr;
     }
 
+    auto PMaster = static_cast<CCharEntity*>(POwner->PMaster);
     float currentDistance = distance(POwner->loc.p, POwner->PMaster->loc.p);
     PTarget = POwner->GetBattleTarget();
     uint8 currentPartyPos = GetPartyPosition();
@@ -104,12 +109,12 @@ void CTrustController::DoCombatTick(time_point tick)
                 }
                 else if (POwner->GetSpeed() > 0)
                 {
-                    POwner->PAI->PathFind->WarpTo(POwner->PMaster->loc.p, RoamDistance);
+                    POwner->PAI->PathFind->WarpTo(PMaster->loc.p, RoamDistance);
                 }
             }
             else
             {
-                for (auto POtherTrust : static_cast<CCharEntity*>(POwner->PMaster)->PTrusts)
+                for (auto POtherTrust : PMaster->PTrusts)
                 {
                     if (POtherTrust != POwner && !POtherTrust->PAI->PathFind->IsFollowingPath() && distance(POtherTrust->loc.p, POwner->loc.p) < 1.0f)
                     {
@@ -129,14 +134,9 @@ void CTrustController::DoCombatTick(time_point tick)
             POwner->PAI->PathFind->FollowPath();
         }
 
-        auto currentTopEnmity = GetTopEnmity();
-        if (m_LastTopEnmity != currentTopEnmity)
-        {
-            POwner->PAI->EventHandler.triggerListener("ENMITY_CHANGED", POwner, POwner->PMaster, PTarget);
-            m_LastTopEnmity = currentTopEnmity;
-        }
+        m_BehaviourContainer->Tick(tick);
 
-        POwner->PAI->EventHandler.triggerListener("COMBAT_TICK", POwner, POwner->PMaster, PTarget);
+        //POwner->PAI->EventHandler.triggerListener("COMBAT_TICK", POwner, PMaster, PTarget);
     }
 }
 
@@ -207,6 +207,23 @@ bool CTrustController::Ability(uint16 targid, uint16 abilityid)
         return POwner->PAI->Internal_Ability(targid, abilityid);
     }
     return false;
+}
+
+bool CTrustController::Cast(uint16 targid, SpellID spellid)
+{
+    FaceTarget(targid);
+    if (static_cast<CMobEntity*>(POwner)->PRecastContainer->Has(RECAST_MAGIC, static_cast<uint16>(spellid)))
+    {
+        return false;
+    }
+
+    auto PSpell = spell::GetSpell(spellid);
+    if (PSpell->getValidTarget() == TARGET_SELF)
+    {
+        targid = POwner->targid;
+    }
+
+    return CController::Cast(targid, spellid);
 }
 
 CBattleEntity* CTrustController::GetTopEnmity()

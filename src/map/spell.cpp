@@ -163,6 +163,14 @@ bool CSpell::isCure()
     return ((static_cast<uint16>(m_ID) >= 1 && static_cast<uint16>(m_ID) <= 11) || m_ID == SpellID::Cura || m_ID == SpellID::Cura_II || m_ID == SpellID::Cura_III);
 }
 
+bool CSpell::isDebuff()
+{
+    return ((getValidTarget() & TARGET_ENEMY) && getSkillType() == SKILL_ENFEEBLING_MAGIC) || m_ID == SpellID::Burn ||
+        m_ID == SpellID::Frost || m_ID == SpellID::Choke || m_ID == SpellID::Rasp || m_ID == SpellID::Shock ||
+        m_ID == SpellID::Drown || m_ID == SpellID::Stun || m_ID == SpellID::Curse || m_ID == SpellID::Bio ||
+        m_ID == SpellID::Bio_II || m_ID == SpellID::Bio_III || m_ID == SpellID::Bio_IV || m_ID == SpellID::Bio_V;
+}
+
 bool CSpell::isNa()
 {
     return (static_cast<uint16>(m_ID) >= 14 && static_cast<uint16>(m_ID) <= 20) || m_ID == SpellID::Erase;
@@ -592,7 +600,7 @@ namespace spell
             uint8 JobSLVL = spell->getJob(PCaster->GetSJob());
             uint8 requirements = spell->getRequirements();
 
-            if (PCaster->objtype == TYPE_MOB || (PCaster->objtype == TYPE_PET && static_cast<CPetEntity*>(PCaster)->getPetType() == PETTYPE_AUTOMATON))
+            if (PCaster->objtype == TYPE_MOB || (PCaster->objtype == TYPE_PET && static_cast<CPetEntity*>(PCaster)->getPetType() == PETTYPE_AUTOMATON) || PCaster->objtype == TYPE_TRUST)
             {
                 // cant cast cause im hidden or untargetable
                 if (PCaster->IsNameHidden() || static_cast<CMobEntity*>(PCaster)->IsUntargetable())

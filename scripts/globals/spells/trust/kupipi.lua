@@ -1,10 +1,14 @@
 -----------------------------------------
 -- Trust: Kupipi
 -----------------------------------------
+require("scripts/globals/magic")
+require("scripts/globals/gambits")
+require("scripts/globals/status")
 require("scripts/globals/trust")
 require("scripts/globals/utils")
 require("scripts/globals/zone")
 -----------------------------------------
+
 
 function onMagicCastingCheck(caster, target, spell)
     return tpz.trust.canCast(caster, spell)
@@ -22,19 +26,28 @@ function onSpellCast(caster, target, spell)
 end
 
 function onMobSpawn(mob)
-    mob:addListener("COMBAT_TICK", "KUPIPI_COMBAT_TICK", function(trust, master, target)
-        function round(x)
-            return x >= 0 and math.floor(x + 0.5) or math.ceil(x - 0.5)
-        end
-        
-        local party = master:getPartyWithTrusts()
-        local lvl = trust:getMainLvl()
-        local maxCure = utils.clamp(round(lvl/8), 1, 6)
+    local CURE_I = 1
+    local FLASH  = 112
+    local ERASE  = 143
+    local DISPEL = 260
 
-        for _, member in ipairs(party) do
-            if member:getHPP() <= 75 then
-                trust:castSpell(maxCure, member)
-            end
-        end
-    end)
+    mob:addBehaviour(PARTY, HPP_LTE, 25, MA, SELECT_HIGHEST, tpz.magic.spellFamily.CURE)
+
+    mob:addBehaviour(PARTY, STATUS, tpz.effect.SLEEP_I, MA, SELECT_SPECIFIC, CURE_I)
+    mob:addBehaviour(PARTY, STATUS, tpz.effect.SLEEP_II, MA, SELECT_SPECIFIC, CURE_I)
+
+    mob:addBehaviour(PARTY, HPP_LTE, 75, MA, SELECT_HIGHEST, tpz.magic.spellFamily.CURE)
+
+    mob:addBehaviour(PARTY, NOT_STATUS, tpz.effect.PROTECT, MA, SELECT_HIGHEST, tpz.magic.spellFamily.PROTECTRA)
+    mob:addBehaviour(PARTY, NOT_STATUS, tpz.effect.SHELL, MA, SELECT_HIGHEST, tpz.magic.spellFamily.SHELLRA)
+
+    mob:addBehaviour(SELF, STATUS_FLAG, tpz.effectFlag.ERASABLE, MA, SELECT_SPECIFIC, ERASE)
+    mob:addBehaviour(PARTY, STATUS_FLAG, tpz.effectFlag.ERASABLE, MA, SELECT_SPECIFIC, ERASE)
+
+    mob:addBehaviour(TARGET, STATUS_FLAG, tpz.effectFlag.DISPELABLE, MA, SELECT_SPECIFIC, DISPEL)
+
+    mob:addBehaviour(TARGET, NOT_STATUS, tpz.effect.PARALYSIS, MA, SELECT_HIGHEST, tpz.magic.spellFamily.PARALYZE, 60)
+    mob:addBehaviour(TARGET, NOT_STATUS, tpz.effect.SLOW, MA, SELECT_HIGHEST, tpz.magic.spellFamily.SLOW, 60)
+
+    mob:addBehaviour(TARGET, NOT_STATUS, tpz.effect.FLASH, MA, SELECT_SPECIFIC, FLASH, 60)
 end

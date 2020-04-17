@@ -25,6 +25,7 @@
 #include "mobentity.h"
 
 class CCharEntity;
+
 class CTrustEntity : public CMobEntity
 {
 public:
@@ -42,6 +43,8 @@ public:
     void Spawn() override;
     bool ValidTarget(CBattleEntity* PInitiator, uint16 targetFlags) override;
     void OnDespawn(CDespawnState&) override;
+
+    void OnCastFinished(CMagicState& state, action_t& action);
 
     uint32 m_TrustID{};
 };
