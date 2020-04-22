@@ -1,5 +1,7 @@
 #include "gambits_container.h"
 
+#include "../../utils/battleutils.h"
+
 void CGambitsContainer::AddGambit(G_SELECTOR selector, G_TRIGGER trigger, uint16 trigger_condition, G_REACTION reaction, G_REACTION_MODIFIER reaction_mod, uint16 reaction_arg, uint16 retry_delay)
 {
     actions.push_back(Action_t{ selector, trigger, trigger_condition, reaction, reaction_mod, reaction_arg, retry_delay });
@@ -7,8 +9,8 @@ void CGambitsContainer::AddGambit(G_SELECTOR selector, G_TRIGGER trigger, uint16
 
 void CGambitsContainer::Tick(time_point tick)
 {
-    // Do something every 3 seconds
-    if (tick < m_lastAction + 3s)
+    // Do something every second
+    if (tick < m_lastAction + 1s)
     {
         return;
     }
@@ -72,6 +74,12 @@ void CGambitsContainer::Tick(time_point tick)
             {
                 auto PSCEffect = target->StatusEffectContainer->GetStatusEffect(EFFECT_SKILLCHAIN);
                 return PSCEffect && PSCEffect->GetStartTime() + 3s < server_clock::now() && PSCEffect->GetTier() == 0;
+                break;
+            }
+            case NOT_SC_AVAILABLE:
+            {
+                auto PSCEffect = target->StatusEffectContainer->GetStatusEffect(EFFECT_SKILLCHAIN);
+                return PSCEffect == nullptr;
                 break;
             }
             case MB_AVAILABLE:
@@ -166,9 +174,29 @@ void CGambitsContainer::Tick(time_point tick)
                         resonanceProperties.push_back((SKILLCHAIN_ELEMENT)(power >> 8));
                     }
 
-                    // Find relevant spell
+                    std::unordered_map<int, int> resonanceToElement;
+                    resonanceToElement[SC_LIQUEFACTION] = ELEMENT_FIRE;
+                    resonanceToElement[SC_REVERBERATION] = ELEMENT_WATER;
 
-                    // If no relevant spell, bail out.
+                    // Find relevant spell
+                    std::optional<SpellID> spell_id;
+                    for (auto& resonance_element : resonanceProperties)
+                    {
+                        // TODO: Get by element
+                        for (auto& spell : POwner->SpellContainer->m_damageList)
+                        {
+                            if (spell::GetSpell(spell)->getElement() == resonanceToElement[resonance_element])
+                            {
+                                // Bingo!
+                                spell_id = spell;
+                            }
+                        }
+                    }
+
+                    if (spell_id.has_value())
+                    {
+                        controller->Cast(target->targid, static_cast<SpellID>(spell_id.value()));
+                    }
                 }
             }
 

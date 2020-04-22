@@ -29,7 +29,8 @@ enum G_TRIGGER : uint16
     STATUS_FLAG = 6,
     NUKE = 7,
     SC_AVAILABLE = 8,
-    MB_AVAILABLE = 9,
+    NOT_SC_AVAILABLE = 9,
+    MB_AVAILABLE = 10,
 };
 
 enum G_REACTION : uint16

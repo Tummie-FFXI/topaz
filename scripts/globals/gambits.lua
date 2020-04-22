@@ -12,16 +12,17 @@ PARTY  = 1
 TARGET = 2
 
 -- Triggers
-HPP_LTE      = 0
-HPP_GTE      = 1
-MPP_LTE      = 2
-TP_GTE       = 3
-STATUS       = 4
-NOT_STATUS   = 5
-STATUS_FLAG  = 6
-NUKE         = 7
-SC_AVAILABLE = 8
-MB_AVAILABLE = 9
+HPP_LTE          = 0
+HPP_GTE          = 1
+MPP_LTE          = 2
+TP_GTE           = 3
+STATUS           = 4
+NOT_STATUS       = 5
+STATUS_FLAG      = 6
+NUKE             = 7
+SC_AVAILABLE     = 8
+NOT_SC_AVAILABLE = 9
+MB_AVAILABLE     = 10
 
 -- Reactions
 ATTACK = 0
