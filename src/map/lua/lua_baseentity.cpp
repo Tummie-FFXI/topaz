@@ -75,7 +75,7 @@
 #include "../ai/controllers/mob_controller.h"
 #include "../ai/controllers/trust_controller.h"
 
-#include "../ai/helpers/behaviour_container.h"
+#include "../ai/helpers/gambits_container.h"
 
 #include "../entities/automatonentity.h"
 #include "../entities/charentity.h"
@@ -12067,13 +12067,13 @@ inline int32 CLuaBaseEntity::getTrustID(lua_State* L)
 }
 
 /************************************************************************
-*  Function: addBehaviour()
+*  Function: addGambit()
 *  Purpose :
-*  Example : mob:addBehaviour(PARTY, HPP_LTE, 25, MA, SELECT_HIGHEST, tpz.magic.spellFamily.CURE)
+*  Example : mob:addGambit(PARTY, HPP_LTE, 25, MA, SELECT_HIGHEST, tpz.magic.spellFamily.CURE)
 *  Notes   : Adds a behaviour to the gambit system
 ************************************************************************/
 
-inline int32 CLuaBaseEntity::addBehaviour(lua_State* L)
+inline int32 CLuaBaseEntity::addGambit(lua_State* L)
 {
     TPZ_DEBUG_BREAK_IF(m_PBaseEntity == nullptr);
     TPZ_DEBUG_BREAK_IF(m_PBaseEntity->objtype != TYPE_TRUST);
@@ -12086,11 +12086,11 @@ inline int32 CLuaBaseEntity::addBehaviour(lua_State* L)
     TPZ_DEBUG_BREAK_IF(lua_isnil(L, 6) || !lua_isnumber(L, 6));
     // 7 is optional
 
-    auto selector = static_cast<B_SELECTOR>(lua_tointeger(L, 1));
-    auto trigger = static_cast<B_TRIGGER>(lua_tointeger(L, 2));
+    auto selector = static_cast<G_SELECTOR>(lua_tointeger(L, 1));
+    auto trigger = static_cast<G_TRIGGER>(lua_tointeger(L, 2));
     auto trigger_condition = static_cast<uint16>(lua_tointeger(L, 3));
-    auto reaction = static_cast<B_REACTION>(lua_tointeger(L, 4));
-    auto reaction_mod = static_cast<B_REACTION_MODIFIER>(lua_tointeger(L, 5));
+    auto reaction = static_cast<G_REACTION>(lua_tointeger(L, 4));
+    auto reaction_mod = static_cast<G_REACTION_MODIFIER>(lua_tointeger(L, 5));
     auto reaction_arg = static_cast<uint16>(lua_tointeger(L, 6));
     auto retry_delay = 0;
     if (!lua_isnil(L, 7) && lua_isnumber(L, 7))
@@ -12101,7 +12101,7 @@ inline int32 CLuaBaseEntity::addBehaviour(lua_State* L)
     auto trust = static_cast<CTrustEntity*>(m_PBaseEntity);
     auto controller = static_cast<CTrustController*>(trust->PAI->GetController());
 
-    controller->m_BehaviourContainer->AddBehaviour(selector, trigger, trigger_condition, reaction, reaction_mod, reaction_arg, retry_delay);
+    controller->m_GambitsContainer->AddGambit(selector, trigger, trigger_condition, reaction, reaction_mod, reaction_arg, retry_delay);
 
     return 0;
 }
@@ -14749,7 +14749,7 @@ Lunar<CLuaBaseEntity>::Register_t CLuaBaseEntity::methods[] =
     // Trust related
     LUNAR_DECLARE_METHOD(CLuaBaseEntity,spawnTrust),
     LUNAR_DECLARE_METHOD(CLuaBaseEntity,getTrustID),
-    LUNAR_DECLARE_METHOD(CLuaBaseEntity,addBehaviour),
+    LUNAR_DECLARE_METHOD(CLuaBaseEntity,addGambit),
 
     // Mob Entity-Specific
     LUNAR_DECLARE_METHOD(CLuaBaseEntity,setMobLevel),

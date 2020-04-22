@@ -15,7 +15,7 @@ function onSpellCast(caster, target, spell)
 end
 
 function onMobSpawn(mob)
-    mob:addBehaviour(TARGET, MB_AVAILABLE, 0, MA, SELECT_MB_ELEMENT, tpz.magic.spellFamily.NONE)
+    mob:addGambit(TARGET, MB_AVAILABLE, 0, MA, SELECT_MB_ELEMENT, tpz.magic.spellFamily.NONE)
 
-    mob:addBehaviour(TARGET, NUKE, 0, MA, SELECT_HIGHEST, tpz.magic.spellFamily.NONE)
+    mob:addGambit(TARGET, NUKE, 0, MA, SELECT_HIGHEST, tpz.magic.spellFamily.NONE)
 end

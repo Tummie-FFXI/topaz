@@ -26,7 +26,7 @@ end
 function onMobSpawn(mob)
     local FLASH  = 112
 
-    mob:addBehaviour(PARTY, HPP_LTE, 75, MA, SELECT_HIGHEST, tpz.magic.spellFamily.CURE)
+    mob:addGambit(PARTY, HPP_LTE, 75, MA, SELECT_HIGHEST, tpz.magic.spellFamily.CURE)
 
-    mob:addBehaviour(TARGET, NOT_STATUS, tpz.effect.FLASH, MA, SELECT_SPECIFIC, FLASH)
+    mob:addGambit(TARGET, NOT_STATUS, tpz.effect.FLASH, MA, SELECT_SPECIFIC, FLASH)
 end

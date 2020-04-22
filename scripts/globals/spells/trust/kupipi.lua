@@ -31,23 +31,23 @@ function onMobSpawn(mob)
     local ERASE  = 143
     local DISPEL = 260
 
-    mob:addBehaviour(PARTY, HPP_LTE, 25, MA, SELECT_HIGHEST, tpz.magic.spellFamily.CURE)
+    mob:addGambit(PARTY, HPP_LTE, 25, MA, SELECT_HIGHEST, tpz.magic.spellFamily.CURE)
 
-    mob:addBehaviour(PARTY, STATUS, tpz.effect.SLEEP_I, MA, SELECT_SPECIFIC, CURE_I)
-    mob:addBehaviour(PARTY, STATUS, tpz.effect.SLEEP_II, MA, SELECT_SPECIFIC, CURE_I)
+    mob:addGambit(PARTY, STATUS, tpz.effect.SLEEP_I, MA, SELECT_SPECIFIC, CURE_I)
+    mob:addGambit(PARTY, STATUS, tpz.effect.SLEEP_II, MA, SELECT_SPECIFIC, CURE_I)
 
-    mob:addBehaviour(PARTY, HPP_LTE, 75, MA, SELECT_HIGHEST, tpz.magic.spellFamily.CURE)
+    mob:addGambit(PARTY, HPP_LTE, 75, MA, SELECT_HIGHEST, tpz.magic.spellFamily.CURE)
 
-    mob:addBehaviour(PARTY, NOT_STATUS, tpz.effect.PROTECT, MA, SELECT_HIGHEST, tpz.magic.spellFamily.PROTECTRA)
-    mob:addBehaviour(PARTY, NOT_STATUS, tpz.effect.SHELL, MA, SELECT_HIGHEST, tpz.magic.spellFamily.SHELLRA)
+    mob:addGambit(PARTY, NOT_STATUS, tpz.effect.PROTECT, MA, SELECT_HIGHEST, tpz.magic.spellFamily.PROTECTRA)
+    mob:addGambit(PARTY, NOT_STATUS, tpz.effect.SHELL, MA, SELECT_HIGHEST, tpz.magic.spellFamily.SHELLRA)
 
-    mob:addBehaviour(SELF, STATUS_FLAG, tpz.effectFlag.ERASABLE, MA, SELECT_SPECIFIC, ERASE)
-    mob:addBehaviour(PARTY, STATUS_FLAG, tpz.effectFlag.ERASABLE, MA, SELECT_SPECIFIC, ERASE)
+    mob:addGambit(SELF, STATUS_FLAG, tpz.effectFlag.ERASABLE, MA, SELECT_SPECIFIC, ERASE)
+    mob:addGambit(PARTY, STATUS_FLAG, tpz.effectFlag.ERASABLE, MA, SELECT_SPECIFIC, ERASE)
 
-    mob:addBehaviour(TARGET, STATUS_FLAG, tpz.effectFlag.DISPELABLE, MA, SELECT_SPECIFIC, DISPEL)
+    mob:addGambit(TARGET, STATUS_FLAG, tpz.effectFlag.DISPELABLE, MA, SELECT_SPECIFIC, DISPEL)
 
-    mob:addBehaviour(TARGET, NOT_STATUS, tpz.effect.PARALYSIS, MA, SELECT_HIGHEST, tpz.magic.spellFamily.PARALYZE, 60)
-    mob:addBehaviour(TARGET, NOT_STATUS, tpz.effect.SLOW, MA, SELECT_HIGHEST, tpz.magic.spellFamily.SLOW, 60)
+    mob:addGambit(TARGET, NOT_STATUS, tpz.effect.PARALYSIS, MA, SELECT_HIGHEST, tpz.magic.spellFamily.PARALYZE, 60)
+    mob:addGambit(TARGET, NOT_STATUS, tpz.effect.SLOW, MA, SELECT_HIGHEST, tpz.magic.spellFamily.SLOW, 60)
 
-    mob:addBehaviour(TARGET, NOT_STATUS, tpz.effect.FLASH, MA, SELECT_SPECIFIC, FLASH, 60)
+    mob:addGambit(TARGET, NOT_STATUS, tpz.effect.FLASH, MA, SELECT_SPECIFIC, FLASH, 60)
 end

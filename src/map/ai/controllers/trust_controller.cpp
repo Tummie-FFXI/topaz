@@ -25,7 +25,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/
 #include "../../status_effect_container.h"
 #include "../../enmity_container.h"
 #include "../../ai/states/despawn_state.h"
-#include "../../ai/helpers/behaviour_container.h"
+#include "../../ai/helpers/gambits_container.h"
 #include "../../entities/charentity.h"
 #include "../../entities/trustentity.h"
 #include "../../packets/char.h"
@@ -34,7 +34,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/
 
 CTrustController::CTrustController(CCharEntity* PChar, CTrustEntity* PTrust) : CMobController(PTrust)
 {
-    m_BehaviourContainer = std::make_unique<CBehaviourContainer>(PTrust);
+    m_GambitsContainer = std::make_unique<CGambitsContainer>(PTrust);
 }
 
 CTrustController::~CTrustController()
@@ -134,7 +134,7 @@ void CTrustController::DoCombatTick(time_point tick)
             POwner->PAI->PathFind->FollowPath();
         }
 
-        m_BehaviourContainer->Tick(tick);
+        m_GambitsContainer->Tick(tick);
     }
 }
 

@@ -1,11 +1,11 @@
-#include "behaviour_container.h"
+#include "gambits_container.h"
 
-void CBehaviourContainer::AddBehaviour(B_SELECTOR selector, B_TRIGGER trigger, uint16 trigger_condition, B_REACTION reaction, B_REACTION_MODIFIER reaction_mod, uint16 reaction_arg, uint16 retry_delay)
+void CGambitsContainer::AddGambit(G_SELECTOR selector, G_TRIGGER trigger, uint16 trigger_condition, G_REACTION reaction, G_REACTION_MODIFIER reaction_mod, uint16 reaction_arg, uint16 retry_delay)
 {
     actions.push_back(Action_t{ selector, trigger, trigger_condition, reaction, reaction_mod, reaction_arg, retry_delay });
 }
 
-void CBehaviourContainer::Tick(time_point tick)
+void CGambitsContainer::Tick(time_point tick)
 {
     // Do something every 3 seconds
     if (tick < m_lastAction + 3s)
@@ -24,7 +24,7 @@ void CBehaviourContainer::Tick(time_point tick)
             return;
         }
 
-        auto checkTrigger = [&](CBattleEntity* target, B_TRIGGER trigger, uint16 param) -> bool
+        auto checkTrigger = [&](CBattleEntity* target, G_TRIGGER trigger, uint16 param) -> bool
         {
             switch (trigger)
             {
@@ -85,16 +85,16 @@ void CBehaviourContainer::Tick(time_point tick)
         };
 
         CBattleEntity* target = nullptr;
-        if (action.selector == B_SELECTOR::SELF)
+        if (action.selector == G_SELECTOR::SELF)
         {
             target = checkTrigger(POwner, action.trigger, action.trigger_condition) ? POwner : nullptr;
         }
-        else if (action.selector == B_SELECTOR::TARGET)
+        else if (action.selector == G_SELECTOR::TARGET)
         {
             auto mob = POwner->GetBattleTarget();
             target = checkTrigger(mob, action.trigger, action.trigger_condition) ? mob : nullptr;
         }
-        else if (action.selector == B_SELECTOR::PARTY)
+        else if (action.selector == G_SELECTOR::PARTY)
         {
             // TODO: This is very messy
             CCharEntity* master = static_cast<CCharEntity*>(POwner->PMaster);
@@ -123,13 +123,13 @@ void CBehaviourContainer::Tick(time_point tick)
 
         if (target)
         {
-            if (action.reaction == B_REACTION::MA)
+            if (action.reaction == G_REACTION::MA)
             {
-                if (action.reaction_mod == B_REACTION_MODIFIER::SELECT_SPECIFIC)
+                if (action.reaction_mod == G_REACTION_MODIFIER::SELECT_SPECIFIC)
                 {
                     controller->Cast(target->targid, static_cast<SpellID>(action.reaction_arg));
                 }
-                else if (action.reaction_mod == B_REACTION_MODIFIER::SELECT_HIGHEST)
+                else if (action.reaction_mod == G_REACTION_MODIFIER::SELECT_HIGHEST)
                 {
                     auto spell_id = POwner->SpellContainer->GetBestAvailable(static_cast<SPELLFAMILY>(action.reaction_arg));
                     if (spell_id.has_value())
@@ -137,7 +137,7 @@ void CBehaviourContainer::Tick(time_point tick)
                         controller->Cast(target->targid, static_cast<SpellID>(spell_id.value()));
                     }
                 }
-                else if (action.reaction_mod == B_REACTION_MODIFIER::SELECT_LOWEST)
+                else if (action.reaction_mod == G_REACTION_MODIFIER::SELECT_LOWEST)
                 {
                     /*
                     auto spell_id = POwner->SpellContainer->GetWorstAvailable(static_cast<SPELLFAMILY>(action.reaction_arg));
@@ -147,7 +147,7 @@ void CBehaviourContainer::Tick(time_point tick)
                     }
                     */
                 }
-                else if (action.reaction_mod == B_REACTION_MODIFIER::SELECT_RANDOM)
+                else if (action.reaction_mod == G_REACTION_MODIFIER::SELECT_RANDOM)
                 {
                     auto spell_id = POwner->SpellContainer->GetSpell();
                     if (spell_id.has_value())
@@ -155,7 +155,7 @@ void CBehaviourContainer::Tick(time_point tick)
                         controller->Cast(target->targid, static_cast<SpellID>(spell_id.value()));
                     }
                 }
-                else if (action.reaction_mod == B_REACTION_MODIFIER::SELECT_MB_ELEMENT)
+                else if (action.reaction_mod == G_REACTION_MODIFIER::SELECT_MB_ELEMENT)
                 {
                     CStatusEffect* PSCEffect = target->StatusEffectContainer->GetStatusEffect(EFFECT_SKILLCHAIN, 0);
                     std::list<SKILLCHAIN_ELEMENT> resonanceProperties;

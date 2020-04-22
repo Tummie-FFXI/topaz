@@ -1,5 +1,5 @@
-#ifndef _BEHAVIOURCONTAINER
-#define _BEHAVIOURCONTAINER
+#ifndef _GAMBITSCONTAINER
+#define _GAMBITSCONTAINER
 
 #include "../../../common/cbasetypes.h"
 #include "../../entities/charentity.h"
@@ -11,14 +11,14 @@
 #include "../../status_effect_container.h"
 
 
-enum class B_SELECTOR : uint16
+enum class G_SELECTOR : uint16
 {
     SELF = 0,
     PARTY = 1,
     TARGET = 2,
 };
 
-enum B_TRIGGER : uint16
+enum G_TRIGGER : uint16
 {
     HPP_LTE = 0,
     HPP_GTE = 1,
@@ -32,7 +32,7 @@ enum B_TRIGGER : uint16
     MB_AVAILABLE = 9,
 };
 
-enum B_REACTION : uint16
+enum G_REACTION : uint16
 {
     ATTACK = 0,
     ASSIST = 1,
@@ -41,7 +41,7 @@ enum B_REACTION : uint16
     WS = 4,
 };
 
-enum B_REACTION_MODIFIER : uint16
+enum G_REACTION_MODIFIER : uint16
 {
     SELECT_HIGHEST = 0,
     SELECT_LOWEST = 1,
@@ -52,26 +52,26 @@ enum B_REACTION_MODIFIER : uint16
 
 struct Action_t
 {
-    B_SELECTOR selector;
-    B_TRIGGER trigger;
+    G_SELECTOR selector;
+    G_TRIGGER trigger;
     uint16 trigger_condition;
-    B_REACTION reaction;
-    B_REACTION_MODIFIER reaction_mod;
+    G_REACTION reaction;
+    G_REACTION_MODIFIER reaction_mod;
     uint16 reaction_arg;
     uint16 retry_delay;
     time_point last_used;
 };
 
-class CBehaviourContainer
+class CGambitsContainer
 {
 public:
-    CBehaviourContainer(CTrustEntity* trust)
+    CGambitsContainer(CTrustEntity* trust)
         : POwner(trust)
     {}
 
-    ~CBehaviourContainer() = default;
+    ~CGambitsContainer() = default;
 
-    void AddBehaviour(B_SELECTOR selector, B_TRIGGER trigger, uint16 trigger_condition, B_REACTION reaction, B_REACTION_MODIFIER reaction_mod, uint16 reaction_arg, uint16 retry_delay);
+    void AddGambit(G_SELECTOR selector, G_TRIGGER trigger, uint16 trigger_condition, G_REACTION reaction, G_REACTION_MODIFIER reaction_mod, uint16 reaction_arg, uint16 retry_delay);
     void Tick(time_point tick);
 
 private:
@@ -80,4 +80,4 @@ private:
     std::vector<Action_t> actions;
 };
 
-#endif // _BEHAVIOURCONTAINER
+#endif // _GAMBITSCONTAINER
