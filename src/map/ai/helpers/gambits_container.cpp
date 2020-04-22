@@ -175,40 +175,40 @@ void CGambitsContainer::Tick(time_point tick)
                     }
 
                     // TODO: Move this to battleutils
-                    std::unordered_map<int, int> resonanceToElement;
+                    std::unordered_map<int, std::vector<int>> resonanceToElement;
 
-                    resonanceToElement[SC_TRANSFIXION] = ELEMENT_LIGHT;
-                    resonanceToElement[SC_COMPRESSION] = ELEMENT_DARK;
-                    resonanceToElement[SC_LIQUEFACTION] = ELEMENT_FIRE;
-                    resonanceToElement[SC_SCISSION] = ELEMENT_EARTH;
-                    resonanceToElement[SC_REVERBERATION] = ELEMENT_WATER;
-                    resonanceToElement[SC_DETONATION] = ELEMENT_WIND;
-                    resonanceToElement[SC_INDURATION] = ELEMENT_ICE;
-                    resonanceToElement[SC_IMPACTION] = ELEMENT_THUNDER;
+                    resonanceToElement[SC_TRANSFIXION] = { ELEMENT_LIGHT };
+                    resonanceToElement[SC_COMPRESSION] = { ELEMENT_DARK };
+                    resonanceToElement[SC_LIQUEFACTION] = { ELEMENT_FIRE };
+                    resonanceToElement[SC_SCISSION] = { ELEMENT_EARTH };
+                    resonanceToElement[SC_REVERBERATION] = { ELEMENT_WATER };
+                    resonanceToElement[SC_DETONATION] = { ELEMENT_WIND };
+                    resonanceToElement[SC_INDURATION] = { ELEMENT_ICE };
+                    resonanceToElement[SC_IMPACTION] = { ELEMENT_THUNDER };
 
-                    // TODO: Multi element lookups
-                    resonanceToElement[SC_GRAVITATION] = ELEMENT_EARTH;
-                    resonanceToElement[SC_DISTORTION] = ELEMENT_WATER;
-                    resonanceToElement[SC_FUSION] = ELEMENT_FIRE;
-                    resonanceToElement[SC_FRAGMENTATION] = ELEMENT_THUNDER;
+                    resonanceToElement[SC_GRAVITATION] = { ELEMENT_EARTH, ELEMENT_DARK };
+                    resonanceToElement[SC_DISTORTION] = { ELEMENT_WATER, ELEMENT_ICE };
+                    resonanceToElement[SC_FUSION] = { ELEMENT_FIRE, ELEMENT_LIGHT };
+                    resonanceToElement[SC_FRAGMENTATION] = { ELEMENT_WIND, ELEMENT_THUNDER };
 
-                    resonanceToElement[SC_LIGHT] = ELEMENT_FIRE;
-                    resonanceToElement[SC_DARKNESS] = ELEMENT_ICE;
-                    resonanceToElement[SC_LIGHT_II] = ELEMENT_LIGHT;
-                    resonanceToElement[SC_DARKNESS_II] = ELEMENT_DARK;
+                    resonanceToElement[SC_LIGHT] = { ELEMENT_LIGHT, ELEMENT_FIRE, ELEMENT_WIND, ELEMENT_THUNDER };
+                    resonanceToElement[SC_DARKNESS] = { ELEMENT_DARK, ELEMENT_EARTH, ELEMENT_WATER, ELEMENT_ICE };
+                    resonanceToElement[SC_LIGHT_II] = { ELEMENT_LIGHT };
+                    resonanceToElement[SC_DARKNESS_II] = { ELEMENT_DARK };
 
-                    // Find relevant spell
                     std::optional<SpellID> spell_id;
                     for (auto& resonance_element : resonanceProperties)
                     {
                         // TODO: Get by element
                         for (auto& spell : POwner->SpellContainer->m_damageList)
                         {
-                            if (spell::GetSpell(spell)->getElement() == resonanceToElement[resonance_element])
+                            auto spell_element = spell::GetSpell(spell)->getElement();
+                            for (auto& chain_element : resonanceToElement[resonance_element])
                             {
-                                // Bingo!
-                                // TODO: Early breakout on finding best relevant spell
-                                spell_id = spell;
+                                if (spell_element == chain_element)
+                                {
+                                    spell_id = spell;
+                                }
                             }
                         }
                     }
