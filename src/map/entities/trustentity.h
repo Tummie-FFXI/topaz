@@ -41,6 +41,7 @@ public:
     void FadeOut() override;
     void Die() override;
     void Spawn() override;
+    void OnAbility(CAbilityState&, action_t&) override;
     bool ValidTarget(CBattleEntity* PInitiator, uint16 targetFlags) override;
     void OnDespawn(CDespawnState&) override;
 

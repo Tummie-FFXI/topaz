@@ -135,6 +135,15 @@ void CTrustController::DoCombatTick(time_point tick)
         }
 
         m_GambitsContainer->Tick(tick);
+
+        auto currentTopEnmity = GetTopEnmity();
+        if (m_LastTopEnmity != currentTopEnmity)
+        {
+            POwner->PAI->EventHandler.triggerListener("ENMITY_CHANGED", POwner, POwner->PMaster, PTarget);
+            m_LastTopEnmity = currentTopEnmity;
+        }
+
+        POwner->PAI->EventHandler.triggerListener("COMBAT_TICK", POwner, POwner->PMaster, PTarget);
     }
 }
 
